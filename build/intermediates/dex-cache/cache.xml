@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="C:\Userlib\CareClient5\app\build\intermediates\pre-dexed\debug\xmlpull_1_0_5-70ec210e55ed15062633a0c651d28155496851cd.jar"
+        jar="C:\Userlib\CareClient5\app\libs\xmlpull_1_0_5.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="91430168f3ddecadcc85cd0d11398893af77d351"/>
+    <item
+        dex="C:\Userlib\CareClient6\app\build\intermediates\pre-dexed\release\xmlpull_1_0_5-ce2f31fa4458b447b1fb1e1e6b4bb31c93dc0d17.jar"
+        jar="C:\Userlib\CareClient6\app\libs\xmlpull_1_0_5.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="91430168f3ddecadcc85cd0d11398893af77d351"/>
+
+</pre-dex-items>

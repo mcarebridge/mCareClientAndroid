@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">mCareBridge</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="logo_content_desc">mCareBridge</string>
+    <string name="timestamptext">20-Sept-2014</string>
+    <string name="notification">Notification</string>
+    <string name="notification_hint">User Notification</string>
+    <string name="reminder">Reminder Name</string>
+    <string name="done">Done</string>
+
+    <!-- Rx Box -->
+    <string name="rxreminder">Rx reminder</string>
+    <string name="rxhint">Do not forget your medication</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_care_layout">CareLayout</string>
+
+</resources>

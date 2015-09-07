@@ -1,0 +1,75 @@
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Synch Rx"
+        android:id="@+id/synchBtn"
+        android:onClick="onSynch"
+        android:layout_marginLeft="171dp"
+        android:clickable="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:background="#ff1b9042"
+        android:textColor="#ffffffff"
+        android:paddingLeft="2dp"
+        android:paddingTop="2dp"
+        android:paddingRight="2dp"
+        android:paddingBottom="2dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quit"
+        android:id="@+id/closeBtn"
+        android:layout_alignTop="@+id/synchBtn"
+        android:layout_toRightOf="@+id/synchBtn"
+        android:layout_marginLeft="75dp"
+        android:padding="2dp"
+        android:paddingLeft="2dp"
+        android:paddingTop="2dp"
+        android:paddingRight="2dp"
+        android:paddingBottom="2dp"
+        android:onClick="onQuit" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="mCareBridge"
+        android:id="@+id/mcarelogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:textSize="60dp"
+        android:textColor="#ffffedd9"
+        android:typeface="normal"
+        android:background="#ff3379cb"
+        android:padding="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Welcome to mCareBridge"
+        android:id="@+id/msgwindow"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/emptySpace"
+        android:textColor="#ff2084a3"
+        android:padding="5dp" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px"
+        android:layout_below="@+id/synchBtn"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/emptySpace"
+        android:layout_alignParentRight="true"
+        android:background="#ffe9eee7" />
+
+</RelativeLayout>
