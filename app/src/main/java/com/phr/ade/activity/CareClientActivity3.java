@@ -157,6 +157,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             try {
 
                 String imeiCode = readIMEICode();
+                //String imeiCode = "353322068558361";
                 //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353322068558368");
                 _responseData = MCareBridgeConnector.synchMobileUsingIMEI(imeiCode);
                 //if the auth is going fail then _responseData = "AUTH-FAILED";

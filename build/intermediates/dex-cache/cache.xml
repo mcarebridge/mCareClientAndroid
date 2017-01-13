@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pre-dex-items>
+<items version="2" >
 
     <item
-        dex="C:\Userlib\CareClient5\app\build\intermediates\pre-dexed\debug\xmlpull_1_0_5-70ec210e55ed15062633a0c651d28155496851cd.jar"
-        jar="C:\Userlib\CareClient5\app\libs\xmlpull_1_0_5.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="91430168f3ddecadcc85cd0d11398893af77d351"/>
+        is-multidex="true"
+        jar="C:\devarea\mCareClientAndroid\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="22.0.0"
+        sha1="46cee6f5aa1a49a568b857b7f97d2c00bb6cd0ca">
+        <dex dex="C:\devarea\mCareClientAndroid\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_3b11e939afaae1888cb1f7e54ecfc54cef036c80\classes.dex" />
+    </item>
     <item
-        dex="C:\Userlib\CareClient6\app\build\intermediates\pre-dexed\release\xmlpull_1_0_5-ce2f31fa4458b447b1fb1e1e6b4bb31c93dc0d17.jar"
-        jar="C:\Userlib\CareClient6\app\libs\xmlpull_1_0_5.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="91430168f3ddecadcc85cd0d11398893af77d351"/>
+        is-multidex="true"
+        jar="C:\devarea\mCareClientAndroid\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="22.0.0"
+        sha1="b58005a7dd96c73e04012bdc151171a2f2ca146f">
+        <dex dex="C:\devarea\mCareClientAndroid\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_d87bdda8387a9e36c9b08d37a332f8d68985dd86\classes.dex" />
+    </item>
 
-</pre-dex-items>
+</items>

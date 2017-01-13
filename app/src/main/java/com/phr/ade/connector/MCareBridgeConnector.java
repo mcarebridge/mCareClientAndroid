@@ -42,7 +42,8 @@ import com.phr.ade.util.CareClientUtil;
 public class MCareBridgeConnector {
 
     private static final String TAG = "MCareBridgeConnector";
-    private static final String BASE_URL = "http://caregiver.mcarebridge.com/health/";
+    //private static final String BASE_URL = "http://caregiver.mcarebridge.com/health/";
+    private static final String BASE_URL = "https://mcarebridge.appspot.com/health/";
     private static final String MCB_AUTH_SERVER_LINK = "caredPersonMobileSecurity";
     private static final String MCB_DATA_EXCHANGE = "caredPersonMobileRxExchange";
     private static String rxConsumed;
