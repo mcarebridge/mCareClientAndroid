@@ -41,6 +41,8 @@ public class CareXMLReader {
 
     public static CaredPerson bindXML(String xmlData) {
 
+        //Log.d("CareXMLReader", "printing _xmlData -->" + xmlData);
+
         InputStream in = null;
         Reader _reader = null;
         CaredPerson _caredPerson = null;
@@ -57,6 +59,8 @@ public class CareXMLReader {
             parser.setInput(in, "utf-8");
             //parser.setInput(_reader);
             _caredPerson = readCaredXML(parser);
+
+            Log.d("CareXMLReader", "printing _caredPerson -->" + _caredPerson);
 
             PreExistingCondition _preCond = _caredPerson.getPreExistingCondition();
             //Log.d("CareXMLReader", "_preCond -->" + _preCond);

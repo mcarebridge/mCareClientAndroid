@@ -110,17 +110,15 @@ public class ClientService1 extends IntentService {
                     intent.putExtra("XML_DATA", _responseData.toCharArray());
                     intent.putExtra("RX_CONSUMED", _rxConsumed.toCharArray());
                     intent.putExtra("RX_ASYNC", _rxSynch.toCharArray());
-                    intent.putExtra("AUTH", "AUTH-PASSED");
+                    intent.putExtra("AUTH", new String("AUTH-PASSED").toCharArray());
                     CaredPerson _caredPerson = CareXMLReader.bindXML(_responseData);
                     _caredPersonName = _caredPerson.getName();
-                    intent.putExtra("CARED_PERSON", _caredPersonName);
+                    intent.putExtra("CARED_PERSON", _caredPersonName.toCharArray());
                     ArrayList<RxLineDTO> _rxLineDTOList = CareXMLReader.extractRxTime(_caredPerson);
                     Log.d("ClientService1", "--size of List -- " + _rxLineDTOList.size());
                     _isRxReady = CareClientUtil.checkTimeToTriggerRx(_rxLineDTOList);
-                }
-                else
-                {
-                    intent.putExtra("AUTH", "AUTH-FAILED");
+                } else {
+                    intent.putExtra("AUTH", new String("AUTH-FAILED").toCharArray());
                 }
             }
             intent.putExtra("RX_SYNCH_STATUS", _rxSynchStatus.toCharArray());
@@ -137,22 +135,17 @@ public class ClientService1 extends IntentService {
                     Log.d("ClientService1", "-- start Activity Triggered Point 1--");
                     Toast.makeText(this, "Rx scheduled -- Loading Schedule", Toast.LENGTH_LONG)
                             .show();
-                    startActivity(intent);
+                    //startActivity(intent);
                 }
             } else if (_rxSynchStatus.equals("TIMEOUT")) {
                 Toast.makeText(this, "Error : Connection Timeout", Toast.LENGTH_LONG)
                         .show();
             } else {
-                Toast.makeText(this, "No Rx scheduled", Toast.LENGTH_LONG)
+                Toast.makeText(this, "Error : Unexpected error. Please report admin@mcarebridge.com", Toast.LENGTH_LONG)
                         .show();
             }
-
-            //For error scenario
-            if (!_rxSynchStatus.equals("SUCCESS")) {
-                Log.d("ClientService1", "-- start Activity triggered Point 2--");
-                startActivity(intent);
-            }
         }
+        startActivity(intent);
     }
 
 
@@ -164,7 +157,9 @@ public class ClientService1 extends IntentService {
     private String readIMEICode() {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String _deviceId = telephonyManager.getDeviceId();
-        Log.i("CareClientActivity1", _deviceId);
+        Log.i("ClientService1", _deviceId);
+        //Only for testing
+        //_deviceId = "867124022666036";
         return _deviceId;
     }
 

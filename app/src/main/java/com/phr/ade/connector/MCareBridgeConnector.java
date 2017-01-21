@@ -71,8 +71,8 @@ public class MCareBridgeConnector {
 
         int timeout = 3; // seconds
         HttpParams httpParams = client.getParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, timeout * 1000); // http.connection.timeout
-        HttpConnectionParams.setSoTimeout(httpParams, timeout * 1000); // http.socket.timeout
+        HttpConnectionParams.setConnectionTimeout(httpParams, timeout * 2000); // http.connection.timeout
+        HttpConnectionParams.setSoTimeout(httpParams, timeout * 2000); // http.socket.timeout
 
         String _synchServerData = MCB_AUTH_SERVER_LINK;
         String _webAppURL = BASE_URL + MCB_AUTH_SERVER_LINK;
@@ -109,8 +109,8 @@ public class MCareBridgeConnector {
             synchServerDataString = readHTTPResponse(client, httppost, response);
             smsSent = false;
             _data = extractRxData(synchServerDataString);
-//            Log.i(TAG,
-//                    "_mobileResponse ---------------------->"//                            + _data);
+            Log.i(TAG,
+                    "_mobileResponse ---------------------->" + _data);
         } else if (_authStr.equalsIgnoreCase("AUTH-FAILED")) {
             _data = "AUTH-FAILED";
         }

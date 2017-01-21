@@ -6,10 +6,13 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -68,6 +71,8 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
     private static long emergencyContactNumber = -1;
     private static String emergencyContactProvider = "None";
+
+    private static String responseData = "";
 
 
     @Override
@@ -157,9 +162,9 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             try {
 
                 String imeiCode = readIMEICode();
-                //String imeiCode = "353322068558361";
-                //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353322068558368");
+
                 _responseData = MCareBridgeConnector.synchMobileUsingIMEI(imeiCode);
+                //_responseData = responseData;
                 //if the auth is going fail then _responseData = "AUTH-FAILED";
                 if (!_responseData.equalsIgnoreCase("AUTH-FAILED")) {
                     _auth = "AUTH-PASSED";
@@ -167,8 +172,8 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
                 _rxConsumed = MCareBridgeConnector.getRxConsumed();
                 _rxSynchStatusString = "SUCCESS";
-                //Log.d("CareClientActivity3 XML -- ", _responseData);
-                //Log.d("CareClientActivity3 -- RxConsumed -- ", _rxConsumed);
+                Log.d("CareClientActivity3 XML -- ", _responseData);
+                Log.d("CareClientActivity3 -- RxConsumed -- ", _rxConsumed + " ########## ");
                 splitRxConsumed(_rxConsumed);
             } catch (SocketTimeoutException s) {
                 Log.e("CareClientActivity3", s.getMessage(), s);
@@ -384,8 +389,6 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
     private void enableTakenSkip(View view) {
 
-        int _takenColor = 0xffbbbbbb;
-        int _skipColor = 0xffbbbbbb;
         Button _symptom1 = (Button) findViewById(R.id.btsymp1);
         Button _symptom2 = (Button) findViewById(R.id.btsymp2);
         Button _symptom3 = (Button) findViewById(R.id.btsymp3);
@@ -395,10 +398,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         Button _symptom7 = (Button) findViewById(R.id.btsymp7);
         Button _symptom8 = (Button) findViewById(R.id.btsymp8);
 
+        Context _context = getApplicationContext();
+        Button _taken = (Button) findViewById(R.id.rxtaken);
+
+
         //if (_rxchk0checked | _rxchk1checked | _rxchk2checked) {
         if (!rxListChecked.isEmpty()) {
-            _takenColor = 0xffacc875;
-            _skipColor = 0xfffff3a4;
 
             _symptom1.setVisibility(View.VISIBLE);
             _symptom2.setVisibility(View.VISIBLE);
@@ -408,6 +413,14 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             _symptom6.setVisibility(View.VISIBLE);
             _symptom7.setVisibility(View.VISIBLE);
             _symptom8.setVisibility(View.VISIBLE);
+
+            //Enable Taken Button
+            Drawable _d1 = _context.getResources().getDrawable(R.drawable.takenactionbtn);
+            _taken.setBackground(_d1);
+            _taken.setClickable(true);
+
+            Log.d("CareClientActivity3", "-- taken button  is enabled --");
+
         } else {
             _symptom1.setVisibility(View.INVISIBLE);
             _symptom2.setVisibility(View.INVISIBLE);
@@ -417,16 +430,21 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             _symptom6.setVisibility(View.INVISIBLE);
             _symptom7.setVisibility(View.INVISIBLE);
             _symptom8.setVisibility(View.INVISIBLE);
+
+            //Enable Taken Button
+            Drawable _d1 = _context.getResources().getDrawable(R.drawable.takenactionbtndisabled);
+            _taken.setBackground(_d1);
+            _taken.setClickable(false);
+            Log.d("CareClientActivity3", "-- taken button  is disabled --");
         }
 
-        //Enable Taken and Skip Button
-        Button _taken = (Button) findViewById(R.id.rxtaken);
-        _taken.setClickable(true);
-        _taken.setBackgroundColor(_takenColor);
 
-        Button _skip = (Button) findViewById(R.id.rxskip);
-        _skip.setClickable(true);
-        _skip.setBackgroundColor(_skipColor);
+        /**
+         Button _skip = (Button) findViewById(R.id.rxskip);
+         _skip.setClickable(true);
+         Drawable _d2 = _context.getResources().getDrawable(R.drawable.skipactionbtn);
+         _skip.setBackground(_d2);
+         **/
     }
 
 
@@ -434,7 +452,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         Log.d("CareClient", "-- onSkipClick --");
 
         Button _rxskip = (Button) findViewById(R.id.rxskip);
-        _rxskip.setEnabled(false);
+//        _rxskip.setEnabled(false);
         _rxskip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -449,7 +467,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         Log.d("CareClient", "-- onTakenClick --");
 
         Button _rxtaken = (Button) findViewById(R.id.rxtaken);
-        _rxtaken.setEnabled(false);
+//        _rxtaken.setEnabled(false);
 
         _rxtaken.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -578,11 +596,11 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         Log.d("CareClientActivity3", "--calling paintScreen --");
         //Set the RxFor
 
-        Button _rxtaken = (Button) findViewById(R.id.rxtaken);
-        _rxtaken.setEnabled(true);
+//        Button _rxtaken = (Button) findViewById(R.id.rxtaken);
+//        _rxtaken.setEnabled(true);
 
-        Button _rxskip = (Button) findViewById(R.id.rxskip);
-        _rxskip.setEnabled(true);
+//        Button _rxskip = (Button) findViewById(R.id.rxskip);
+//        _rxskip.setEnabled(true);
 
         if (caredPerson != null) {
             TextView _rxFor = (TextView) findViewById(R.id.rxfor);
@@ -691,6 +709,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         Log.d("CareClientActivity3", "paintRxLines1 - size of rxLineDTOs" + rxLineDTOs.size());
         initRxChart();
         int _i = 0;
+        Context _context = getApplicationContext();
 
         //Check to enable or disable Next Button
         Button _next = (Button) findViewById(R.id.nextRx);
@@ -698,7 +717,10 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             _next.setVisibility(View.INVISIBLE);
         } else {
             _next.setVisibility(View.VISIBLE);
-            _next.setBackgroundColor(Color.parseColor("#309060"));
+            _next.setClickable(true);
+            Drawable _d1 = _context.getResources().getDrawable(R.drawable.nextactionbtn);
+            _next.setBackground(_d1);
+            //_next.setBackgroundColor(Color.parseColor("#309060"));
         }
 
 
@@ -882,16 +904,22 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         //Button _symptom = (Button) findViewById(view.getId());
         //_symptom.setBackgroundColor(0xFF84BB6C);
         Button _symptom = null;
+        Context _context = getApplicationContext();
+
 
         switch (view.getId()) {
 
             case R.id.btsymp1:
                 _symptom = (Button) findViewById(R.id.btsymp1);
                 if (_sb1Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb1Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
                     _sb1Pressed = true;
                 }
                 break;
@@ -899,10 +927,14 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp2:
                 _symptom = (Button) findViewById(R.id.btsymp2);
                 if (_sb2Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb2Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
                     _sb2Pressed = true;
                 }
                 break;
@@ -910,10 +942,14 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp3:
                 _symptom = (Button) findViewById(R.id.btsymp3);
                 if (_sb3Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb3Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
                     _sb3Pressed = true;
                 }
                 break;
@@ -921,10 +957,14 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp4:
                 _symptom = (Button) findViewById(R.id.btsymp4);
                 if (_sb4Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb4Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
                     _sb4Pressed = true;
                 }
                 break;
@@ -932,10 +972,15 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp5:
                 _symptom = (Button) findViewById(R.id.btsymp5);
                 if (_sb5Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb5Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
+
                     _sb5Pressed = true;
                 }
                 break;
@@ -943,10 +988,16 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp6:
                 _symptom = (Button) findViewById(R.id.btsymp6);
                 if (_sb6Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
+
                     _sb6Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
+
                     _sb6Pressed = true;
                 }
                 break;
@@ -954,10 +1005,15 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp7:
                 _symptom = (Button) findViewById(R.id.btsymp7);
                 if (_sb7Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb7Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
+
                     _sb7Pressed = true;
                 }
                 break;
@@ -965,10 +1021,15 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             case R.id.btsymp8:
                 _symptom = (Button) findViewById(R.id.btsymp8);
                 if (_sb8Pressed) {
-                    _symptom.setBackgroundColor(0xffbbbbbb);
+                    //_symptom.setBackgroundColor(0xffbbbbbb);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    _symptom.setBackground(_d);
                     _sb8Pressed = false;
                 } else {
-                    _symptom.setBackgroundColor(0xFFFFB55D);
+                    //_symptom.setBackgroundColor(0xFFFFB55D);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    _symptom.setBackground(_d);
+
                     _sb8Pressed = true;
                 }
                 break;
@@ -1052,6 +1113,9 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
     private String readIMEICode() {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String _deviceId = telephonyManager.getDeviceId();
+
+        //Only for testing
+        //_deviceId = "867124022666036";
         Log.i("CareClientActivity3", _deviceId);
         return _deviceId;
     }
@@ -1209,6 +1273,61 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
         mNotificationManager.notify(notificationId, notification);
         // dj end
+    }
+
+
+    ProgressDialog progressDialog;
+
+    private class LoginAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+
+            Log.d("LoginAsyncTask.onPreExecute", "----");
+
+            progressDialog = new ProgressDialog(CareClientActivity3.this);
+            progressDialog.setMessage("Please wait...");
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        protected Void doInBackground(Void... args) {
+            // Parsse response data
+            Log.d("LoginAsyncTask.doInBackground", "----");
+            String imeiCode = readIMEICode();
+
+            try {
+                responseData = MCareBridgeConnector.synchMobileUsingIMEI(imeiCode);
+                Log.d("LoginAsyncTask.responseData", "----> " + responseData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            Log.d("LoginAsyncTask.onPostExecute", "----");
+
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    try {
+                        Thread.sleep(2000);
+                        if (progressDialog.isShowing())
+                            progressDialog.dismiss();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+
+//            if (progressDialog.isShowing())
+//                progressDialog.dismiss();
+            //move activity
+            super.onPostExecute(result);
+        }
     }
 
 

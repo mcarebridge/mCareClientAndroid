@@ -12,50 +12,43 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:textSize="60dp"
+        android:textSize="40dp"
         android:textColor="#ffffedd9"
         android:typeface="normal"
         android:background="#3b5998"
         android:padding="5dp" />
 
-    <Space
-        android:layout_width="20px"
-        android:layout_height="20px"
-        android:layout_below="@+id/synchbtn"
-        android:layout_alignParentLeft="true"
-        android:id="@+id/emptySpace"
-        android:layout_alignParentRight="true"
-        android:background="#ffe9eee7" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="  Close  "
+        android:clickable="false"
         android:textColor="#ffffffff"
         android:id="@+id/closeBtn"
         android:background="@drawable/closebtn"
         android:onClick="onQuit"
-        android:layout_marginLeft="109dp"
-        android:layout_marginStart="109dp"
-        android:layout_above="@+id/emptySpace"
-        android:layout_toRightOf="@+id/synchbtn"
-        android:layout_toEndOf="@+id/synchbtn" />
+        android:layout_alignBaseline="@+id/synchbtn"
+        android:layout_alignBottom="@+id/synchbtn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="103dp"
+        android:layout_marginEnd="103dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Synch Rx"
+        android:text="Synching Rx..."
         android:id="@+id/synchbtn"
         android:onClick="onSynch"
-        android:background="@drawable/synchbtn"
-        android:clickable="true"
+        android:background="@drawable/synchbtndisabled"
+        android:clickable="false"
         android:textColor="#ffffffff"
-        android:layout_marginStart="87dp"
-        android:layout_marginTop="26dp"
-        android:layout_below="@+id/mcarelogo"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/msgwindow"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="87dp" />
+        android:layout_marginLeft="115dp"
+        android:layout_marginStart="115dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -65,8 +58,10 @@
         android:id="@+id/msgwindow"
         android:textColor="#ff2084a3"
         android:padding="5dp"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/mcarelogo"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
