@@ -2,7 +2,6 @@ package com.phr.ade.activity;
 
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,6 +26,7 @@ import android.widget.Toast;
 import com.phr.ade.connector.CareXMLReader;
 import com.phr.ade.connector.MCareBridgeConnector;
 import com.phr.ade.dto.RxLineDTO;
+import com.phr.ade.util.CareClientConstants;
 import com.phr.ade.util.CareClientUtil;
 import com.phr.ade.xmlbinding.CaredPerson;
 import com.phr.ade.xmlbinding.Condition;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
-public class CareClientActivity3 extends Activity implements View.OnClickListener {
+public class CareClientActivity3 extends Activity implements View.OnClickListener, CareClientConstants {
 
     private static boolean alarmSet = false;
     private static boolean _sb1Pressed = false;
@@ -131,6 +131,8 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         String _auth = "AUTH-FAILED";
         boolean _serviceCall = false;
 
+        //temp code 04/01/2017 to reset all the symptom buttons
+        resetAllSymptomButtons(false);
         consumedRxList = new ArrayList<Long>();
 
         Log.d("CareClientActivity3", "--_serviceCall before--" + _serviceCall);
@@ -244,6 +246,10 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                     Log.d("CareClientActivity3 interface", "-------> No Scheduled Rx Found <----------");
                     Toast.makeText(this, "No Rx scheduled", Toast.LENGTH_LONG)
                             .show();
+
+                    //Go to Appln landing screen
+                    Intent intent = new Intent(this, com.phr.ade.activity.CareClientActivity2.class);
+                    startActivity(intent);
                 }
             } else if (_rxSynchStatusString.equals("SUCCESS") && _auth.equalsIgnoreCase("AUTH-FAILED")) {
                 _rxFor.setText("Authorisation Failed : Please register the Cared Person");
@@ -257,7 +263,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _rxFor.setText("Connection Timeout. Please try again");
             }
             _rxFor.setTextColor(Color.RED);
-            _rxFor1.setText("-");
+//            _rxFor1.setText("-");
             _rxFor1.setTextColor(Color.RED);
             disableScreen(this);
         }
@@ -456,8 +462,23 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         _rxskip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitCaredPersonData("SKIP");
-                moveTaskToBack(true);
+                int _rxTakenStatus = submitCaredPersonData("SKIP");
+                Button _rxskip1 = (Button) findViewById(R.id.rxskip);
+                Context _context = getApplicationContext();
+
+                if (_rxTakenStatus == RXTAKEN_SUCCESS) {
+                    //moveTaskToBack(true);
+                    //Go to Appln landing screen
+                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
+                    intent.putExtra("RX_SYNCH_STATUS", new String("SUCCESS").toCharArray());
+                    intent.putExtra("AUTH", new String("AUTH-PASSED").toCharArray());
+                    intent.putExtra("RX_SCHDL", true);
+                    startActivity(intent);
+                } else {
+                    _rxskip1.setText("Close");
+                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -468,12 +489,27 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
         Button _rxtaken = (Button) findViewById(R.id.rxtaken);
 //        _rxtaken.setEnabled(false);
-
         _rxtaken.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitCaredPersonData("TAKEN");
-                moveTaskToBack(true);
+                int _rxTakenStatus = submitCaredPersonData("TAKEN");
+
+                Log.d(" _rxTakenStatus =  " ,  _rxTakenStatus + "");
+                Context _context = getApplicationContext();
+                //Use this only for simulating taken submission
+//                int _rxTakenStatus = 0;
+                Button _rxtaken1 = (Button) findViewById(R.id.rxtaken);
+
+                if (_rxTakenStatus == RXTAKEN_SUCCESS) {
+//                    moveTaskToBack(true);
+                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
+                    intent.putExtra("RX_SYNCH_STATUS", new String("SUCCESS").toCharArray());
+                    intent.putExtra("AUTH", new String("AUTH-PASSED").toCharArray());
+                    intent.putExtra("RX_SCHDL", true);
+                    startActivity(intent);
+                } else {
+                    _rxtaken1.setText("Retry");
+                }
             }
         });
     }
@@ -482,11 +518,13 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
     /**
      * Capture user data and submit to server
      */
-    private void submitCaredPersonData(String action) {
+    private int submitCaredPersonData(String action) {
+
         String _action = "(ACTION=" + action + ")";
         String _rxTaken = "";
         String _symptom = "";
         String _dataSubmitString = "";
+        int _rxtaken_status = RXTAKEN_ERROR;
 
         /**
          if (_rxchk0checked) {
@@ -509,6 +547,22 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _rxTaken += (Long) iterator.next() + ",";
             }
         }
+
+
+        /**
+         * Debug info
+         */
+
+        Log.d("submitCaredPersonData : Symptom Button status : ",
+                " _sb1Pressed - " + _sb1Pressed +
+                        " _sb2Pressed - " + _sb2Pressed +
+                        " _sb3Pressed - " + _sb3Pressed +
+                        " _sb4Pressed - " + _sb4Pressed +
+                        " _sb5Pressed - " + _sb5Pressed +
+                        " _sb6Pressed - " + _sb6Pressed +
+                        " _sb7Pressed - " + _sb7Pressed +
+                        " _sb8Pressed - " + _sb8Pressed
+        );
 
 
         if (_sb1Pressed) {
@@ -563,6 +617,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         Log.d("CareClientActivity ---> Data String ", _dataSubmitString);
 
         String _responseData = null;
+        TextView _rxFor = (TextView) findViewById(R.id.rxfor);
 
         try {
 
@@ -570,9 +625,18 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             //_responseData = MCareBridgeConnector.sendCaredPersonRxData("353197050130472",_dataSubmitString );
             _responseData = MCareBridgeConnector.sendCaredPersonRxData(imeiCode, _dataSubmitString);
             //Log.d("CareClientActivity XML -- ", _responseData);
+            _rxtaken_status = RXTAKEN_SUCCESS;
+        } catch (UnknownHostException e) {
+            Log.e("CareClientActivity3", e.getMessage(), e);
+            e.printStackTrace();
+            _rxtaken_status = RXTAKEN_CONN_ERROR;
+            _rxFor.setText("Connection Timeout. Please try again");
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("CareClientActivity3", e.getMessage(), e);
+            _rxFor.setText("Unexpected error. Please inform admin admin@mcarebridge.com");
+        } finally {
+            return _rxtaken_status;
         }
     }
 
@@ -616,16 +680,9 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
      * @param context
      */
     private void disableScreen(Context context) {
-        CheckBox _rxCheckBox0 = (CheckBox) findViewById(R.id.rxcheck0);
-        _rxCheckBox0.setVisibility(View.INVISIBLE);
-
-        CheckBox _rxCheckBox1 = (CheckBox) findViewById(R.id.rxcheck1);
-        _rxCheckBox1.setVisibility(View.INVISIBLE);
-
-        CheckBox _rxCheckBox2 = (CheckBox) findViewById(R.id.rxcheck2);
-        _rxCheckBox2.setVisibility(View.INVISIBLE);
-
         initRxChart();
+        resetAllSymptomButtons(true);
+        invisibleRxCheckBoxs();
     }
 
 
@@ -710,13 +767,22 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         initRxChart();
         int _i = 0;
         Context _context = getApplicationContext();
+        Button _taken = (Button) findViewById(R.id.rxtaken);
+        Button _skip = (Button) findViewById(R.id.rxskip);
+
+
+        //02/08/2017 - adding logic for disable Taken if all the Rx in the scr are taken
+
+        int _allrXTaken = 0;
+
 
         //Check to enable or disable Next Button
         Button _next = (Button) findViewById(R.id.nextRx);
         if (rxListReceivedSize <= 3) {
-            _next.setVisibility(View.INVISIBLE);
+            //_next.setVisibility(View.D);
+            _next.setClickable(false);
         } else {
-            _next.setVisibility(View.VISIBLE);
+            //_next.setVisibility(View.VISIBLE);
             _next.setClickable(true);
             Drawable _d1 = _context.getResources().getDrawable(R.drawable.nextactionbtn);
             _next.setBackground(_d1);
@@ -768,6 +834,8 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                         _rxDetails_0.setTextColor(Color.LTGRAY);
                         _rxDosage_0.setTextColor(Color.LTGRAY);
                         _rxDosageTime_0.setTextColor(Color.LTGRAY);
+
+                        _allrXTaken++;
                     }
 
                     //Set RxDetails
@@ -812,6 +880,8 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                         _rxDetails_1.setTextColor(Color.LTGRAY);
                         _rxDosage_1.setTextColor(Color.LTGRAY);
                         _rxDosageTime_1.setTextColor(Color.LTGRAY);
+
+                        _allrXTaken++;
                     }
                 }
 
@@ -850,6 +920,8 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                         _rxDetails_2.setTextColor(Color.LTGRAY);
                         _rxDosage_2.setTextColor(Color.LTGRAY);
                         _rxDosageTime_2.setTextColor(Color.LTGRAY);
+
+                        _allrXTaken++;
                     }
                 }
 
@@ -858,6 +930,14 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
             if (rxListCurrPointer == 0) {
                 rxListCurrPointer += 3;
+            }
+
+            //02/07/2017 - Check if all the Rx on the scr is taken
+
+            if (_allrXTaken++ == 3) {
+                _taken.setClickable(false);
+                _skip.setText("Close");
+                _skip.setClickable(true);
             }
         }
     }
@@ -897,6 +977,63 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         _rxCheckBox0.setClickable(false);
         _rxCheckBox1.setClickable(false);
         _rxCheckBox2.setClickable(false);
+
+    }
+
+    /**
+     * Reset all the Symptom buttons after initial reset
+     *
+     * @param disableClick
+     */
+    private void resetAllSymptomButtons(boolean disableClick) {
+        /*** Initialize all the Symptom Buttons ***/
+
+        Log.d("CareClientActivity3", "-- calling resetAllSymptomButtons --");
+
+        resetSymptomButton(R.id.btsymp1, _sb1Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp2, _sb2Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp3, _sb3Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp4, _sb4Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp5, _sb5Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp6, _sb6Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp7, _sb7Pressed, disableClick);
+        resetSymptomButton(R.id.btsymp8, _sb8Pressed, disableClick);
+    }
+
+    /**
+     * Reset all the Symptom buttons
+     *
+     * @param viewId
+     * @param disableButton
+     */
+    private void resetSymptomButton(int viewId, boolean symBtnFlag, boolean disableButton) {
+        Context _context = getApplicationContext();
+
+        Button _symptom = (Button) findViewById(viewId);
+        Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+        _symptom.setBackground(_d);
+        symBtnFlag = false;
+
+        if (disableButton) {
+            _symptom.setClickable(false);
+        }
+    }
+
+    private void invisibleRxCheckBoxs() {
+        CheckBox _rxCheckBox0 = (CheckBox) findViewById(R.id.rxcheck0);
+        _rxCheckBox0.setVisibility(View.INVISIBLE);
+
+        CheckBox _rxCheckBox1 = (CheckBox) findViewById(R.id.rxcheck1);
+        _rxCheckBox1.setVisibility(View.INVISIBLE);
+
+        CheckBox _rxCheckBox2 = (CheckBox) findViewById(R.id.rxcheck2);
+        _rxCheckBox2.setVisibility(View.INVISIBLE);
+    }
+
+    private void resetNavigation()
+
+    {
+
     }
 
 
@@ -905,7 +1042,23 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         //_symptom.setBackgroundColor(0xFF84BB6C);
         Button _symptom = null;
         Context _context = getApplicationContext();
+        Log.d("CareClientActivity3", "onClickSymptoms # :" + view.getId());
 
+        Button _b = (Button) findViewById(view.getId());
+
+        Log.d("CareClientActivity3", " button Clicked # :" + _b.getText());
+
+
+        Log.d("submitCaredPersonData before : Symptom Button status : ",
+                " _sb1Pressed - " + _sb1Pressed + "\n" +
+                        " _sb2Pressed - " + _sb2Pressed + "\n" +
+                        " _sb3Pressed - " + _sb3Pressed + "\n" +
+                        " _sb4Pressed - " + _sb4Pressed + "\n" +
+                        " _sb5Pressed - " + _sb5Pressed + "\n" +
+                        " _sb6Pressed - " + _sb6Pressed + "\n" +
+                        " _sb7Pressed - " + _sb7Pressed + "\n" +
+                        " _sb8Pressed - " + _sb8Pressed
+        );
 
         switch (view.getId()) {
 
@@ -913,12 +1066,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp1);
                 if (_sb1Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb1Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
                     _sb1Pressed = true;
                 }
@@ -928,12 +1081,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp2);
                 if (_sb2Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb2Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
                     _sb2Pressed = true;
                 }
@@ -943,12 +1096,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp3);
                 if (_sb3Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb3Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
                     _sb3Pressed = true;
                 }
@@ -958,12 +1111,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp4);
                 if (_sb4Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb4Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
                     _sb4Pressed = true;
                 }
@@ -973,12 +1126,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp5);
                 if (_sb5Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb5Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
 
                     _sb5Pressed = true;
@@ -989,13 +1142,13 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp6);
                 if (_sb6Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
 
                     _sb6Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
 
                     _sb6Pressed = true;
@@ -1006,12 +1159,12 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp7);
                 if (_sb7Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb7Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
 
                     _sb7Pressed = true;
@@ -1022,18 +1175,33 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 _symptom = (Button) findViewById(R.id.btsymp8);
                 if (_sb8Pressed) {
                     //_symptom.setBackgroundColor(0xffbbbbbb);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
                     _symptom.setBackground(_d);
                     _sb8Pressed = false;
                 } else {
                     //_symptom.setBackgroundColor(0xFFFFB55D);
-                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtn);
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.sympactionbtnselect);
                     _symptom.setBackground(_d);
 
                     _sb8Pressed = true;
                 }
                 break;
         }
+
+        /**
+         * Debug info
+         */
+
+        Log.d("submitCaredPersonData after : Symptom Button status : ",
+                " _sb1Pressed - " + _sb1Pressed + "\n" +
+                        " _sb2Pressed - " + _sb2Pressed + "\n" +
+                        " _sb3Pressed - " + _sb3Pressed + "\n" +
+                        " _sb4Pressed - " + _sb4Pressed + "\n" +
+                        " _sb5Pressed - " + _sb5Pressed + "\n" +
+                        " _sb6Pressed - " + _sb6Pressed + "\n" +
+                        " _sb7Pressed - " + _sb7Pressed + "\n" +
+                        " _sb8Pressed - " + _sb8Pressed
+        );
 
     }
 
