@@ -17,15 +17,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.phr.ade.util.CareClientConstants;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.SimpleFormatter;
 
 
-public class CareClientActivity2 extends Activity implements View.OnClickListener {
+public class CareClientActivity2 extends Activity implements View.OnClickListener, CareClientConstants {
 
     private static boolean alarmSet = false;
+    private static boolean isActiveInBkgrnd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,27 +66,37 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("CareClientActivity2", "--calling onStart --");
-        Intent _intent = getIntent();
-        char[] _rxSynchStatus = _intent.getCharArrayExtra("RX_SYNCH_STATUS");
-        char[] _caredPersonName = _intent.getCharArrayExtra("CARED_PERSON");
-        char[] _auth = _intent.getCharArrayExtra("AUTH");
 
-        boolean _rxSchdl = _intent.getBooleanExtra("RX_SCHDL", false);
+        if (!isActiveInBkgrnd) {
+            Log.d("CareClientActivity2", "--calling onStart --");
+            Intent _intent = getIntent();
+            char[] _rxSynchStatus = _intent.getCharArrayExtra("RX_SYNCH_STATUS");
+            char[] _caredPersonName = _intent.getCharArrayExtra("CARED_PERSON");
+            char[] _auth = _intent.getCharArrayExtra("AUTH");
 
-        String rxSynchStatus = _rxSynchStatus != null ? new String(_rxSynchStatus) : "";
-        String caredPersonName = _caredPersonName != null ? new String(_caredPersonName) : "-";
-        String auth = _auth != null ? new String(_auth) : "";
+            boolean _rxSchdl = _intent.getBooleanExtra("RX_SCHDL", false);
 
-        Log.d("CareClientActivity2", "-- rxSynchStatus --" + rxSynchStatus);
-        Log.d("CareClientActivity2", "-- AUTH --" + auth);
+            String rxSynchStatus = _rxSynchStatus != null ? new String(_rxSynchStatus) : "";
+            String caredPersonName = _caredPersonName != null ? new String(_caredPersonName) : "-";
+            String auth = _auth != null ? new String(_auth) : "";
 
-        TextView _rxMsgWindow = (TextView) findViewById(R.id.msgwindow);
-        _rxMsgWindow.setTextColor(Color.BLACK);
+            Log.d("CareClientActivity2", "-- rxSynchStatus --" + rxSynchStatus);
+            Log.d("CareClientActivity2", "-- AUTH --" + auth);
+            Log.d("CareClientActivity2", "-- isActiveInBkgrnd --" + isActiveInBkgrnd);
 
-        String _messageToDisplay = selectDisplayMessage(rxSynchStatus, caredPersonName, _rxSchdl, auth);
+            TextView _rxMsgWindow = (TextView) findViewById(R.id.msgwindow);
+            _rxMsgWindow.setTextColor(Color.BLACK);
 
-        _rxMsgWindow.setText(_messageToDisplay);
+            TextView _lastUpdTimeStamp = (TextView) findViewById(R.id.lastUpdTimeStamp);
+            _lastUpdTimeStamp.setTextColor(Color.BLACK);
+
+            String _messageToDisplay = selectDisplayMessage(rxSynchStatus, caredPersonName, _rxSchdl, auth);
+
+            _rxMsgWindow.setText(_messageToDisplay);
+        } else {
+            new LoginAsyncTask(this).execute();
+            isActiveInBkgrnd = false;
+        }
     }
 
 
@@ -128,20 +145,30 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
         Log.d("CareClient", "-- onQuit --");
 
         Button _rxClose = (Button) findViewById(R.id.closeBtn);
-        _rxClose.setClickable(false);
+        //_rxClose.setClickable(false);
 
         Button _synchButton = (Button) findViewById(R.id.synchbtn);
         _synchButton.setClickable(false);
+
         Context _context = getApplicationContext();
         Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtndisabled);
         _synchButton.setBackground(_d);
 
-        _rxClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveTaskToBack(true);
-            }
+        //code to clean closure - start
+        //Intent intent = new Intent(CareClientActivity2.this, CareClientActivity2.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //startActivity(intent);
+        //code to clean closure - end
+
+        isActiveInBkgrnd = true;
+        moveTaskToBack(true);
+        /**
+         _rxClose.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+        moveTaskToBack(true);
+        }
         });
+         **/
     }
 
 
@@ -152,46 +179,69 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
         Log.d("selectDisplayMessage ", rxSynchStatus + "-" + caredPersonName);
         Button _synchButton = (Button) findViewById(R.id.synchbtn);
         Button _closeButton = (Button) findViewById(R.id.closeBtn);
+        TextView _caredPerson = (TextView) findViewById(R.id.cpName);
+
+        TextView _rxMsgWindow = (TextView) findViewById(R.id.msgwindow);
+
+        TextView _lastUpdTimeStamp = (TextView) findViewById(R.id.lastUpdTimeStamp);
+
+        Date _currDate = Calendar.getInstance().getTime();
+        SimpleDateFormat _sdf = new SimpleDateFormat("MMM d,y hh:mm a z");
+        String _formattedDate = _sdf.format(_currDate);
+        _lastUpdTimeStamp.setText(_formattedDate);
+
 
         if (rxSynchStatus.equals("SUCCESS")) {
-            _messageToDisplay = "Welcome " + caredPersonName;
+            //_messageToDisplay = "Schedule updated at : " + _formattedDate + '\n' + "Welcome " + caredPersonName;
+            //_messageToDisplay = "Schedule updated at : " + _formattedDate;
+            _synchButton.setClickable(true);
+            _caredPerson.setText(caredPersonName);
+            Context _context = getApplicationContext();
+
             if (auth.equals("AUTH-PASSED")) {
                 if (rxSchdl) {
-                    _messageToDisplay += '\n' + "Rx scheduled. Please click on Synch to Proceed ";
+                    _messageToDisplay = "You have scheduled medication. Click on 'Load Rx' Proceed ";
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
+                    _synchButton.setText("Load Rx");
+                    _synchButton.setBackground(_d);
                 } else {
-                    _messageToDisplay += '\n' + "No Rx scheduled.";
+                    _messageToDisplay = "Relax. No scheduled medication.";
+                    _synchButton.setText("Load Rx");
+                    Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtndisabled);
+                    _synchButton.setBackground(_d);
+                    _synchButton.setClickable(false);
                 }
-
-                _synchButton.setClickable(true);
-                Context _context = getApplicationContext();
-                Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
-                _synchButton.setBackground(_d);
-                _synchButton.setText("Synch Rx");
                 _closeButton.setClickable(true);
-
             }
             // auth.equals("AUTH-FAILED")
             else {
                 Log.d("selectDisplayMessage : AuthStatus - ", auth + "-");
-                _messageToDisplay = " Welcome to mCareBridge.";
+                _messageToDisplay = "Schedule updated at :" + _formattedDate + '\n' + " Welcome to mCareBridge.";
                 _synchButton.setClickable(true);
                 _closeButton.setClickable(true);
-
-                Context _context = getApplicationContext();
+                //Context _context = getApplicationContext();
                 Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
                 _synchButton.setBackground(_d);
                 _synchButton.setText("Retry");
-                _messageToDisplay += '\n' + "You are not registered with mCareBridge. Please contact your Care Provider.";
+                _messageToDisplay += '\t' + "You are not registered with mCareBridge. Please contact your Care Provider.";
             }
         } else if (rxSynchStatus.equals("TIMEOUT")) {
-            _messageToDisplay = "Connection Timeout. Please try again";
+            _messageToDisplay = "Connection Timeout. Please check internet connection.";
+            setWifiIcon(CONNECTION_ERR);
+            _synchButton.setText("Retry");
             _synchButton.setClickable(true);
             _closeButton.setClickable(true);
-        }
-        else if (rxSynchStatus.equals("ERROR")) {
+        } else if (rxSynchStatus.equals("ERROR")) {
             _messageToDisplay = "Error in Data Synch. Please report to admin@mcarebridge.com.";
+            setWifiIcon(TIMEOUT_ERR);
             _synchButton.setClickable(false);
             _synchButton.setText("Synch Err");
+            _closeButton.setClickable(true);
+        } else {
+            _messageToDisplay = "No internet connect found. Please check internet connection.";
+            setWifiIcon(CONNECTION_ERR);
+            _synchButton.setClickable(true);
+            _synchButton.setText("Retry");
             _closeButton.setClickable(true);
         }
 
@@ -204,8 +254,7 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
 
         public CareClientActivity2 ccActivity2;
 
-        public LoginAsyncTask(CareClientActivity2 ccActivity2)
-        {
+        public LoginAsyncTask(CareClientActivity2 ccActivity2) {
             this.ccActivity2 = ccActivity2;
         }
 
@@ -256,5 +305,41 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
     }
 
 
+    /**
+     * Set Background ICON thru code
+     */
+
+    private void setWifiIcon(int phoneError) {
+        Context _context = getApplicationContext();
+        // Left, top, right, bottom drawables.
+        Button _synchButton = (Button) findViewById(R.id.synchbtn);
+        Drawable[] drawables = _synchButton.getCompoundDrawables();
+        Drawable _img = null;
+        // get left drawable.
+        Drawable _topCompoundDrawable = drawables[1];
+        // get new drawable.
+
+        switch (phoneError) {
+            case SYNC_SUCCESSFUL:
+                _img = _context.getResources().getDrawable(R.drawable.ic_local_pharmacy_white_24dp);
+                break;
+
+            case CONNECTION_ERR:
+                _img = _context.getResources().getDrawable(R.drawable.ic_signal_wifi_off_white_24dp);
+                break;
+
+            case TIMEOUT_ERR:
+                _img = _context.getResources().getDrawable(R.drawable.ic_sync_problem_white_24dp);
+                break;
+
+            default:
+                break;
+        }
+
+        // set image size (don't change the size values)
+        _img.setBounds(_topCompoundDrawable.getBounds());
+        // set new drawable
+        _synchButton.setCompoundDrawables(null, _img, null, null);
+    }
 }
 
