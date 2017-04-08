@@ -69,7 +69,7 @@ public class MCareBridgeConnector {
 
         HttpClient client = new DefaultHttpClient();
 
-        int timeout = 3; // seconds
+        int timeout = 5; // seconds
         HttpParams httpParams = client.getParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, timeout * 2000); // http.connection.timeout
         HttpConnectionParams.setSoTimeout(httpParams, timeout * 2000); // http.socket.timeout

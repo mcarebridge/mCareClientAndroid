@@ -128,7 +128,7 @@ public class ClientService1 extends IntentService {
             ComponentName cn = new ComponentName(this, com.phr.ade.activity.CareClientActivity2.class);
             intent.setComponent(cn);
 
-            Log.d("ClientService1", "_rxSynchStatus = " + _rxSynchStatus + "_isRxReady = " + _isRxReady);
+            Log.d("ClientService1", "_rxSynchStatus = " + _rxSynchStatus + " _isRxReady = " + _isRxReady);
 
             if (_rxSynchStatus.equals("SUCCESS")) {
                 if (_isRxReady) {

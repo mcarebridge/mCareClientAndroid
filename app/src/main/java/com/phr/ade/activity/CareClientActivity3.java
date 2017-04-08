@@ -494,7 +494,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             public void onClick(View v) {
                 int _rxTakenStatus = submitCaredPersonData("TAKEN");
 
-                Log.d(" _rxTakenStatus =  " ,  _rxTakenStatus + "");
+                Log.d(" _rxTakenStatus =  ", _rxTakenStatus + "");
                 Context _context = getApplicationContext();
                 //Use this only for simulating taken submission
 //                int _rxTakenStatus = 0;
@@ -502,6 +502,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
 
                 if (_rxTakenStatus == RXTAKEN_SUCCESS) {
 //                    moveTaskToBack(true);
+                    resetAllSymptomButtons(false);
                     Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
                     intent.putExtra("RX_SYNCH_STATUS", new String("SUCCESS").toCharArray());
                     intent.putExtra("AUTH", new String("AUTH-PASSED").toCharArray());
@@ -1211,7 +1212,6 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
      * @param view
      */
     public void dialEmergency(View view) {
-
         if (emergencyContactNumber != -1) {
 
             String _emergencyNumber = "tel:" + emergencyContactNumber;
@@ -1224,6 +1224,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
             Toast.makeText(this, "No Emergency Contact Found", Toast.LENGTH_LONG)
                     .show();
         }
+
 
 
     }
