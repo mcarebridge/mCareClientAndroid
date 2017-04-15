@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phr.ade.connector.CareXMLReader;
+import com.phr.ade.service.MCareHttpAsyncTask;
+import com.phr.ade.service.McareOnTaskDoneListenerImpl;
+import com.phr.ade.service.OnTaskDoneListener;
 import com.phr.ade.util.CareClientConstants;
 import com.phr.ade.util.CareClientUtil;
 import com.phr.ade.xmlbinding.CaredPerson;
@@ -124,8 +127,9 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
         char[] _auth = getIntent().getCharArrayExtra("AUTH");
         boolean _rxSchdl = getIntent().getBooleanExtra("RX_SCHDL", false);
         String auth = _auth != null ? new String(_auth) : "";
-        Log.d("CareClientActivity2", "-- onSynch.AUTH --" + auth);
+        Log.d("CareClientActivity2", "-- onSynch.AUTH --" + auth + " _rxSchdl -- " + _rxSchdl);
 
+        //temp <code>
         if (auth.equals("AUTH-PASSED") && _rxSchdl) {
             Intent intent = new Intent(this, com.phr.ade.activity.CareClientActivity3.class);
             intent.setAction(Intent.ACTION_MAIN);
@@ -138,11 +142,6 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
 //            startService(_intent);
             new LoginAsyncTask(this).execute();
         }
-
-        //startActivity(_intent);
-        //this.finish(); //
-
-        //new LoginAsyncTask().execute();
     }
 
     /**
@@ -182,6 +181,7 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
     private String selectDisplayMessage(String rxSynchStatus, String caredPersonName, boolean rxSchdl, String auth, String xmlData) {
 
         String _messageToDisplay = "Welcome to mCareBridge. Data Sync-up in process. Please wait.";
+        CaredPerson _caredPerson = null;
 
         Log.d("selectDisplayMessage ", rxSynchStatus + "-" + caredPersonName);
         Button _synchButton = (Button) findViewById(R.id.synchbtn);
@@ -197,20 +197,24 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
         String _formattedDate = _sdf.format(_currDate);
         _lastUpdTimeStamp.setText(_formattedDate);
 
+        Context _context = getApplicationContext();
 
         if (rxSynchStatus.equals("SUCCESS")) {
             //_messageToDisplay = "Schedule updated at : " + _formattedDate + '\n' + "Welcome " + caredPersonName;
             //_messageToDisplay = "Schedule updated at : " + _formattedDate;
             _synchButton.setClickable(true);
             _caredPersonText.setText(caredPersonName);
-            Context _context = getApplicationContext();
+
 
             if (auth.equals("AUTH-PASSED")) {
 
-                CaredPerson _caredPerson = CareXMLReader.bindXML(xmlData);
-                Log.d("-- Displaying Emergency Contact Details -- ", _caredPerson.getEmergencyResponse().getProvider().getContactPerson());
-                Log.d("-- Displaying Emergency Contact Details -- ", _caredPerson.getEmergencyResponse().getProvider().getCell());
-                setCaredPerson(_caredPerson);
+                if (xmlData != null) {
+                    _caredPerson = CareXMLReader.bindXML(xmlData);
+                    Log.d("-- Displaying Emergency Contact Details -- ", _caredPerson.getEmergencyResponse().getProvider().getContactPerson());
+                    Log.d("-- Displaying Emergency Contact Details -- ", _caredPerson.getEmergencyResponse().getProvider().getCell());
+                    setCaredPerson(_caredPerson);
+
+                }
 
                 if (rxSchdl) {
                     _messageToDisplay = "You have scheduled medication. Click on 'Load Rx' Proceed ";
@@ -246,6 +250,14 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
             _synchButton.setText("Retry");
             _synchButton.setClickable(true);
             _closeButton.setClickable(true);
+        } else if (rxSynchStatus.equals("HOST_NOT_FOUND")) {
+            _messageToDisplay = "Unable to resolve server name. Please check internet connection.";
+            setWifiIcon(CONNECTION_ERR);
+            Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
+            _synchButton.setBackground(_d);
+            _synchButton.setText("Retry");
+            _synchButton.setClickable(true);
+            _closeButton.setClickable(true);
         } else if (rxSynchStatus.equals("ERROR")) {
             _messageToDisplay = "Error in Data Synch. Please report to admin@mcarebridge.com.";
             setWifiIcon(TIMEOUT_ERR);
@@ -253,8 +265,11 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
             _synchButton.setText("Synch Err");
             _closeButton.setClickable(true);
         } else {
-            _messageToDisplay = "No internet connect found. Please check internet connection.";
+            Log.d("Displaying rxSynchStatus values for last condition :  ----> ", rxSynchStatus);
+            _messageToDisplay = "Unexpected err: " + rxSynchStatus + " Please report to admin@mcarebridge.com.";
             setWifiIcon(CONNECTION_ERR);
+            Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
+            _synchButton.setBackground(_d);
             _synchButton.setClickable(true);
             _synchButton.setText("Retry");
             _closeButton.setClickable(true);
@@ -268,10 +283,20 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
     private class LoginAsyncTask extends AsyncTask<Void, Void, Void> {
 
         public CareClientActivity2 ccActivity2;
+        private Context mContext;
+        private OnTaskDoneListener onTaskDoneListener;
+
 
         public LoginAsyncTask(CareClientActivity2 ccActivity2) {
             this.ccActivity2 = ccActivity2;
         }
+
+
+        public LoginAsyncTask(Context context, OnTaskDoneListener onTaskDoneListener) {
+            this.mContext = context;
+            this.onTaskDoneListener = onTaskDoneListener;
+        }
+
 
         @Override
         protected void onPreExecute() {
@@ -285,10 +310,9 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
         }
 
         protected Void doInBackground(Void... args) {
-            // Parsse response data
+            // Parse response data
             Log.d("LoginAsyncTask.doInBackground", "----");
             Intent _intent = new Intent(this.ccActivity2, com.phr.ade.service.ClientService1.class);
-            PendingIntent pi = PendingIntent.getService(this.ccActivity2, 0, _intent, 0);
             startService(_intent);
             return null;
         }
@@ -302,8 +326,7 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
                 public void run() {
                     super.run();
                     try {
-                        //Not sure why a sleep for 2 secs is needed. To be removed if hampering performance
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                         if (progressDialog.isShowing())
                             progressDialog.dismiss();
                     } catch (InterruptedException e) {
@@ -391,6 +414,33 @@ public class CareClientActivity2 extends Activity implements View.OnClickListene
 
     private void setCaredPerson(CaredPerson caredPerson) {
         this.caredPerson = caredPerson;
+    }
+
+
+    public void sendWhatsAppMessage(View v) {
+        Uri uri = Uri.parse("smsto:" + "+19175018339");
+        Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+        sendIntent.setAction(Intent.ACTION_SEND);
+
+        sendIntent.setType("text/plain");
+        // Put this line here
+        sendIntent.setPackage("com.whatsapp");
+        startActivity(sendIntent);
+    }
+
+
+    public void asynchAuthenticate(View v) {
+        String BASE_URL = "https://mcarebridge.appspot.com/health/";
+        String MCB_AUTH_SERVER_LINK = "caredPersonMobileSecurity";
+        String MCB_DATA_EXCHANGE = "caredPersonMobileRxExchange";
+
+        String _synchServerData = MCB_AUTH_SERVER_LINK;
+        String _webAppURL = BASE_URL + MCB_AUTH_SERVER_LINK;
+
+        Context _context = getApplicationContext();
+        McareOnTaskDoneListenerImpl _mCareOnTask = new McareOnTaskDoneListenerImpl(this);
+        new MCareHttpAsyncTask(_context, _webAppURL, _mCareOnTask).execute();
     }
 
 

@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.AUTO_TIME_ZONE"></uses-permission>
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 
     <application
@@ -41,6 +42,18 @@
             android:name="com.phr.ade.activity.CareClientActivity2"
             android:label="@string/app_name"
             android:screenOrientation="landscape">
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+
+        <activity
+            android:name="com.phr.ade.activity.CareClientActivity2A"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -61,7 +74,6 @@
             android:name="com.phr.ade.service.ClientService1"
             android:enabled="true"
             android:exported="true"></service>
-
         <!--
         <receiver android:name="com.phr.ade.util.StartMyServiceAtBootReceiver">
             <intent-filter>
@@ -70,10 +82,10 @@
         </receiver>
         -->
         <receiver
-            android:name="com.phr.ade.util.StartMyServiceAtBootReceiver"
+            android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true"
-            android:label="StartMyServiceAtBootReceiver">
+            android:label="AlarmReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

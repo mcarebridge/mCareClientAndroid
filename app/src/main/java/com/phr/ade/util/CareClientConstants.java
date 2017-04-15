@@ -1,8 +1,5 @@
 package com.phr.ade.util;
 
-/**
- * Created by dheerajs on 1/22/2017.
- */
 
 public interface CareClientConstants {
 
@@ -16,4 +13,15 @@ public interface CareClientConstants {
     int CONNECTION_ERR = 1;
     int TIMEOUT_ERR = 2;
 
+
+    //ASYNC TRANSMISSION MESSAGES
+
+    int REQUEST_ADDED_NOT_SENT = 100;
+    int REQUEST_SENT = 102;
+    int REQUEST_SENT_WAITING_FOR_RESP = 200;
+    int REQUEST_SENT_RESP_RCVD = 202;
+    int REQUEST_SENT_RCVD_ERR = 204;
+
+    int REQUEST_MSG_NOT_READ = 300;
+    int REQUEST_MSG_READ = 302;
 }

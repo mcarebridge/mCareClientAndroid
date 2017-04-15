@@ -109,8 +109,8 @@ public class MCareBridgeConnector {
             synchServerDataString = readHTTPResponse(client, httppost, response);
             smsSent = false;
             _data = extractRxData(synchServerDataString);
-            Log.i(TAG,
-                    "_mobileResponse ---------------------->" + _data);
+//            Log.i(TAG,
+//                    "_mobileResponse ---------------------->" + _data);
         } else if (_authStr.equalsIgnoreCase("AUTH-FAILED")) {
             _data = "AUTH-FAILED";
         }
@@ -236,12 +236,11 @@ public class MCareBridgeConnector {
 
 
     /**
-     * Extract Location and Shift data from the server data
      *
      * @param serverData
      * @return
      */
-    public static String extractRxData(String serverData) {
+    private static String extractRxData(String serverData) {
 
         //Log.d("MCareBridgeConnector", "--data received --" + serverData);
 
@@ -313,7 +312,8 @@ public class MCareBridgeConnector {
             _message += "scheduled at " + _currentHour + " Hrs";
 
             if (!smsSent) {
-                CareClientUtil.sendSMS(_cgCell, _message);
+                // 04/09 - Stopping SMS module for sometime.
+                //CareClientUtil.sendSMS(_cgCell, _message);
                 smsSent = true;
             }
         }
@@ -326,7 +326,7 @@ public class MCareBridgeConnector {
      * @param serverData
      * @return
      */
-    public static String extractAuthMsg(String serverData) {
+    private static String extractAuthMsg(String serverData) {
         StringTokenizer _st = new StringTokenizer(serverData, "()");
         String _authMsg = (String) _st.nextElement();
         String _authStr = _authMsg.substring(_authMsg.indexOf(":") + 1,

@@ -79,7 +79,7 @@ public class ClientService1 extends IntentService {
             //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353322068558368");
             _responseData = MCareBridgeConnector.synchMobileUsingIMEI(imeiCode);
             _rxConsumed = MCareBridgeConnector.getRxConsumed();
-            Log.d("ClientService1 XML -- ", _responseData + "<<<<<<<");
+            //Log.d("ClientService1 XML -- ", _responseData + "<<<<<<<");
             Log.d("ClientService1 -- RxConsumed -- ", _rxConsumed + "<<<<<<<");
             _rxSynch = "TRUE";
             _serviceCall = true;
@@ -92,11 +92,13 @@ public class ClientService1 extends IntentService {
         } catch (UnknownHostException u) {
             Log.e("ClientService1", u.getMessage(), u);
             u.printStackTrace();
-            _rxSynchStatus = "TIMEOUT";
+            //_rxSynchStatus = "TIMEOUT";
+            _rxSynchStatus = "HOST_NOT_FOUND";
         } catch (Exception e) {
             Log.e("ClientService1", e.getMessage(), e);
             e.printStackTrace();
-            _rxSynchStatus = "ERROR";
+            //_rxSynchStatus = "ERROR";
+            _rxSynchStatus = e.getMessage();
 
         } finally {
 
@@ -125,7 +127,7 @@ public class ClientService1 extends IntentService {
             intent.putExtra("SERVICE_CALL", _serviceCall);
             intent.putExtra("RX_SCHDL", _isRxReady);
 
-            ComponentName cn = new ComponentName(this, com.phr.ade.activity.CareClientActivity2.class);
+            ComponentName cn = new ComponentName(this, com.phr.ade.activity.CareClientActivity2A.class);
             intent.setComponent(cn);
 
             Log.d("ClientService1", "_rxSynchStatus = " + _rxSynchStatus + " _isRxReady = " + _isRxReady);
@@ -137,6 +139,10 @@ public class ClientService1 extends IntentService {
                             .show();
                     //startActivity(intent);
                 }
+                else{
+                    Toast.makeText(this, "Relax. No scheduled medication.", Toast.LENGTH_LONG)
+                            .show();
+                }
             } else if (_rxSynchStatus.equals("TIMEOUT")) {
                 Toast.makeText(this, "Error : Connection Timeout", Toast.LENGTH_LONG)
                         .show();
@@ -145,6 +151,8 @@ public class ClientService1 extends IntentService {
                         .show();
             }
         }
+        Log.d("ClientService1" , "In ClientService1 class ---> triggering intent to call CareClientActivity2A");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
