@@ -73,6 +73,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
     private static String emergencyContactProvider = "None";
 
     private static String responseData = "";
+    private CaredPerson caredPerson;
 
 
     @Override
@@ -224,6 +225,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 //Log.d("XML Received--", _a);
                 _a = _responseData;
                 CaredPerson _caredPerson = CareXMLReader.bindXML(_responseData);
+                this.caredPerson = _caredPerson;
                 ArrayList<RxLineDTO> _rxLineDTOList = CareXMLReader.extractRxTime(_caredPerson);
 
                 //get emergencyContactNumber
@@ -248,7 +250,7 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                             .show();
 
                     //Go to Appln landing screen
-                    Intent intent = new Intent(this, com.phr.ade.activity.CareClientActivity2.class);
+                    Intent intent = new Intent(this, com.phr.ade.activity.CareClientActivity2A.class);
                     startActivity(intent);
                 }
             } else if (_rxSynchStatusString.equals("SUCCESS") && _auth.equalsIgnoreCase("AUTH-FAILED")) {
@@ -469,14 +471,16 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 if (_rxTakenStatus == RXTAKEN_SUCCESS) {
                     //moveTaskToBack(true);
                     //Go to Appln landing screen
-                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
+                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2A.class);
                     intent.putExtra("RX_SYNCH_STATUS", new String("SUCCESS").toCharArray());
                     intent.putExtra("AUTH", new String("AUTH-PASSED").toCharArray());
                     intent.putExtra("RX_SCHDL", true);
+                    intent.putExtra("CARED_PERSON", caredPerson.getName().toCharArray());
                     startActivity(intent);
                 } else {
                     _rxskip1.setText("Close");
-                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
+                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2A.class);
+                    intent.putExtra("CARED_PERSON", caredPerson.getName().toCharArray());
                     startActivity(intent);
                 }
             }
@@ -503,10 +507,11 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
                 if (_rxTakenStatus == RXTAKEN_SUCCESS) {
 //                    moveTaskToBack(true);
                     resetAllSymptomButtons(false);
-                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2.class);
+                    Intent intent = new Intent(_context, com.phr.ade.activity.CareClientActivity2A.class);
                     intent.putExtra("RX_SYNCH_STATUS", new String("SUCCESS").toCharArray());
                     intent.putExtra("AUTH", new String("AUTH-PASSED").toCharArray());
                     intent.putExtra("RX_SCHDL", true);
+                    intent.putExtra("CARED_PERSON", caredPerson.getName().toCharArray());
                     startActivity(intent);
                 } else {
                     _rxtaken1.setText("Retry");
