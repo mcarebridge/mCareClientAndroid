@@ -614,7 +614,9 @@ public class CareClientActivity3 extends Activity implements View.OnClickListene
         _dataSubmitString += "(SYMPTOMS=" + _symptom + ")";
         //Pass the current date from the mobile
         Calendar _c = Calendar.getInstance();
-        SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        // 05/08/2017 : Added the pattern to send the mobile timezone too
+        SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
         String _currDateString = _dateFormat.format(new Date(_c.getTimeInMillis()));
         Log.d("CareClientActivity ---> Current Date ", _currDateString);
         _dataSubmitString += "(CURRDATE=" + _currDateString + ")";
