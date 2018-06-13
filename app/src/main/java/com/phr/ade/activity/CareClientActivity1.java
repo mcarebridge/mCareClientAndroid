@@ -9,7 +9,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -43,7 +42,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
-public class CareClientActivity1 extends Activity implements View.OnClickListener {
+public class CareClientActivity1 extends Activity implements View.OnClickListener
+{
 
     private static boolean alarmSet = false;
     private static boolean _sb1Pressed = false;
@@ -67,9 +67,85 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
     private static ArrayList<Long> consumedRxList = new ArrayList<Long>();
     private static int rxListReceivedSize = 0;
 
+    /**
+     * @param rxList
+     * @param currPos
+     * @return
+     */
+    public static List<RxLineDTO> readNext(List<RxLineDTO> rxList, int currPos)
+    {
+        Log.i("CareClientActivity1", "readNext.rxListCurrPointer ========> " + currPos);
+        //Log.i("CareClientActivity1", "readNext.rxList.size ========> " + rxList.size());
+
+        int _endofList = -1;
+        int _startofList = 0;
+        List<RxLineDTO> _subList = null;
+
+        if (currPos > rxList.size())
+        {
+            currPos = 0;
+            rxListCurrPointer = _startofList + 3;
+            _startofList = currPos;
+        } else
+        {
+            _startofList = currPos;
+            rxListCurrPointer = _startofList + 3;
+        }
+
+        _endofList = _startofList + 3;
+
+
+        if (_endofList > rxList.size())
+        {
+            //_startofList = _startofList - 1;
+            _endofList = rxList.size();
+        }
+
+        Log.i("CareClientActivity1", "readNext fetching from  => "
+                + (_startofList) + " to = " + (_endofList));
+        _subList = rxList.subList(_startofList, _endofList);
+
+        Log.i("CareClientActivity1", "readNext._subList.size ========> " + _subList.size());
+
+
+        for (Iterator iterator = _subList.iterator(); iterator.hasNext(); )
+        {
+            RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
+            System.out.println(" --------> _rxLine = " + _rxLineDTO.getRxLine().getRx() + "---" + _rxLineDTO.getRxLine().getScheduleByHours());
+        }
+
+        return _subList;
+    }
+
+    /**
+     * This method spilts the rxconsumed string into a Array
+     *
+     * @param rxConsumed
+     */
+    private static void splitRxConsumed(String rxConsumed)
+    {
+
+        Log.d("CareClientActivity1", "--calling splitRxConsumed -- " + rxConsumed);
+
+        ArrayList<Long> _consumedRxList = new ArrayList<Long>();
+        if (rxConsumed != null && !rxConsumed.equals("-"))
+        {
+            StringTokenizer _st = new StringTokenizer(rxConsumed, ",");
+
+            while (_st.hasMoreElements())
+            {
+
+                Long _rxId = new Long((String) _st.nextElement());
+
+                _consumedRxList.add(_rxId);
+            }
+        }
+        consumedRxList = _consumedRxList;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         Log.d("CareClientActivity1", "--calling onCreate --");
 
@@ -83,34 +159,34 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
 
         //setUpAlarm(_rxLineDTOList);
-    /**
-        if (!alarmSet) {
-            Calendar cur_cal = Calendar.getInstance();
-            cur_cal.setTimeInMillis(System.currentTimeMillis());
-            cur_cal.set(Calendar.HOUR_OF_DAY, 00);
-            cur_cal.set(Calendar.MINUTE, 00);
-            cur_cal.set(Calendar.SECOND, 0);
+        /**
+         if (!alarmSet) {
+         Calendar cur_cal = Calendar.getInstance();
+         cur_cal.setTimeInMillis(System.currentTimeMillis());
+         cur_cal.set(Calendar.HOUR_OF_DAY, 00);
+         cur_cal.set(Calendar.MINUTE, 00);
+         cur_cal.set(Calendar.SECOND, 0);
 
-            Log.d("CareClientActivity1", "Calender Set time:" + cur_cal.getTime());
-            Intent intent = new Intent(this, com.phr.ade.service.ClientService.class);
-            Log.d("CareClientActivity1", "Intent created");
+         Log.d("CareClientActivity1", "Calender Set time:" + cur_cal.getTime());
+         Intent intent = new Intent(this, com.phr.ade.service.ClientService.class);
+         Log.d("CareClientActivity1", "Intent created");
 
-            PendingIntent pi = PendingIntent.getService(this, 0, intent, 0);
+         PendingIntent pi = PendingIntent.getService(this, 0, intent, 0);
 
-            AlarmManager alarm_manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            //Wake up after every 60 secs
-            alarm_manager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    cur_cal.getTimeInMillis(), 3600 * 1000, pi);
-            Log.d("CareClientActivity1", "alarm manager set");
-            alarmSet = true;
-        }
-     **/
+         AlarmManager alarm_manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+         //Wake up after every 60 secs
+         alarm_manager.setRepeating(AlarmManager.RTC_WAKEUP,
+         cur_cal.getTimeInMillis(), 3600 * 1000, pi);
+         Log.d("CareClientActivity1", "alarm manager set");
+         alarmSet = true;
+         }
+         **/
 
     }
 
-
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
         Log.d("CareClientActivity1", "--onStart--");
 
@@ -135,7 +211,7 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         _serviceCall = _intent.getBooleanExtra("SERVICE_CALL", false);
 
         //**
-        RxLineDTO  _rxDTO = new RxLineDTO();
+        RxLineDTO _rxDTO = new RxLineDTO();
         ArrayList<RxLineDTO> _rxDTOList = new ArrayList<RxLineDTO>();
         _rxDTOList.add(_rxDTO);
         paintRxLines1(_rxDTOList);
@@ -148,8 +224,10 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
         //Call direct if called explicitly
 
-        if (!_serviceCall) {
-            try {
+        if (!_serviceCall)
+        {
+            try
+            {
 
                 String imeiCode = readIMEICode();
                 //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353197050130472");
@@ -161,31 +239,38 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                 splitRxConsumed(_rxConsumed);
             }
 
-            catch (SocketTimeoutException s) {
+            catch (SocketTimeoutException s)
+            {
                 Log.e("CareClientActivity1", s.getMessage(), s);
                 s.printStackTrace();
                 _rxSynchStatusString = "TIMEOUT";
             }
-            catch (UnknownHostException u) {
+            catch (UnknownHostException u)
+            {
                 Log.e("CareClientActivity1", u.getMessage(), u);
                 u.printStackTrace();
                 _rxSynchStatusString = "TIMEOUT";
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Log.e("CareClientActivity1", e.getMessage(), e);
                 e.printStackTrace();
                 _rxSynchStatusString = "ERROR";
             }
-        } else {
-            if (_rxSynchStatus != null) {
+        } else
+        {
+            if (_rxSynchStatus != null)
+            {
                 _rxSynchStatusString = new String(_rxSynchStatus);
             }
 
-            if (_xmlData != null) {
+            if (_xmlData != null)
+            {
                 _responseData = new String(_xmlData);
             }
 
-            if (_rxConsumedChars != null) {
+            if (_rxConsumedChars != null)
+            {
                 _rxConsumed = new String(_rxConsumedChars);
                 splitRxConsumed(_rxConsumed);
             }
@@ -199,32 +284,38 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
         //if (_rxSynchStatusString.equals("SUCCESS") && _responseData != null) {
 
-            if(_responseData != null) {
-                if (_rxSynchStatusString.equalsIgnoreCase("SUCCESS")) {
-                    //_a = new String(_xmlData);
-                    //Log.d("XML Received--", _a);
-                    _a = _responseData;
-                    CaredPerson _caredPerson = CareXMLReader.bindXML(_responseData);
-                    ArrayList<RxLineDTO> _rxLineDTOList = CareXMLReader.extractRxTime(_caredPerson);
+        if (_responseData != null)
+        {
+            if (_rxSynchStatusString.equalsIgnoreCase("SUCCESS"))
+            {
+                //_a = new String(_xmlData);
+                //Log.d("XML Received--", _a);
+                _a = _responseData;
+                CaredPerson _caredPerson = CareXMLReader.bindXML(_responseData);
+                ArrayList<RxLineDTO> _rxLineDTOList = CareXMLReader.extractRxTime(_caredPerson);
 
-                    Log.d("CareClientActivity1 onStart _rxLineDTOList.size()", "------->" + _rxLineDTOList.size());
-                    _rxLineDTOList = pickRxForHour(_rxLineDTOList);
-                    rxLineDTOList = _rxLineDTOList;
-                    paintScreen(this, _caredPerson, _rxLineDTOList);
+                Log.d("CareClientActivity1 onStart _rxLineDTOList.size()", "------->" + _rxLineDTOList.size());
+                _rxLineDTOList = pickRxForHour(_rxLineDTOList);
+                rxLineDTOList = _rxLineDTOList;
+                paintScreen(this, _caredPerson, _rxLineDTOList);
 
-                    boolean _isRxReady = CareClientUtil.checkTimeToTriggerRx(_rxLineDTOList);
-                    if (_isRxReady) {
-                        sendUpdateNotification(_caredPerson.getName());
-                    } else {
-                        Log.d("CareClientActivity1 interface", "-------> No Scheduled Rx Found <----------");
-                        Toast.makeText(this, "No Rx scheduled", Toast.LENGTH_LONG)
-                                .show();
-                    }
+                boolean _isRxReady = CareClientUtil.checkTimeToTriggerRx(_rxLineDTOList);
+                if (_isRxReady)
+                {
+                    sendUpdateNotification(_caredPerson.getName());
+                } else
+                {
+                    Log.d("CareClientActivity1 interface", "-------> No Scheduled Rx Found <----------");
+                    Toast.makeText(this, "No Rx scheduled", Toast.LENGTH_LONG)
+                            .show();
                 }
-        } else {
+            }
+        } else
+        {
             _rxFor.setText("Error in Data Synch. Please try again.");
             Log.d("CareClientActivity1 interface", "------->" + _rxSynchStatusString);
-            if (_rxSynchStatusString.equalsIgnoreCase("TIMEOUT")) {
+            if (_rxSynchStatusString.equalsIgnoreCase("TIMEOUT"))
+            {
                 _rxFor.setText("Connection Timeout. Please try again");
             }
             _rxFor.setTextColor(Color.RED);
@@ -242,68 +333,77 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         //Log.d("CareClientActivity onStart--", _a);
     }
 
-
     /**
      * @param _rxLineDTOList
      * @return
      */
-    private ArrayList<RxLineDTO> pickRxForHour(ArrayList<RxLineDTO> _rxLineDTOList) {
+    private ArrayList<RxLineDTO> pickRxForHour(ArrayList<RxLineDTO> _rxLineDTOList)
+    {
         Calendar _c = Calendar.getInstance();
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
 
-        for (Iterator iterator = _rxLineDTOList.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = _rxLineDTOList.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
-            if (_rxLineDTO.getRxTime() != _hour) {
+            if (_rxLineDTO.getRxTime() != _hour)
+            {
                 iterator.remove();
             }
         }
         return _rxLineDTOList;
     }
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.care_client, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
 
 
     }
 
-
-    public void addRxCheckBoxLister() {
+    public void addRxCheckBoxLister()
+    {
         Log.d("CareClientActivity1", "-- checkBoxClicked Method --");
 
         CheckBox _rxCheckBox0 = (CheckBox) findViewById(R.id.rxcheck0);
-        _rxCheckBox0.setOnClickListener(new View.OnClickListener() {
+        _rxCheckBox0.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 Long _a = (Long) ((CheckBox) v).getTag();
 
-                if (((CheckBox) v).isChecked()) {
+                if (((CheckBox) v).isChecked())
+                {
                     _rxchk0checked = true;
                     //Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getText());
                     Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getTag());
                     rxListChecked.add(_a);
                     enableTakenSkip(v);
-                } else {
+                } else
+                {
                     _rxchk0checked = false;
                     rxListChecked.remove(_a);
                     enableTakenSkip(v);
@@ -313,18 +413,22 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         });
 
         CheckBox _rxCheckBox1 = (CheckBox) findViewById(R.id.rxcheck1);
-        _rxCheckBox1.setOnClickListener(new View.OnClickListener() {
+        _rxCheckBox1.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 Long _a = (Long) ((CheckBox) v).getTag();
-                if (((CheckBox) v).isChecked()) {
+                if (((CheckBox) v).isChecked())
+                {
                     _rxchk1checked = true;
                     //Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getText());
                     Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getTag());
                     rxListChecked.add(_a);
                     enableTakenSkip(v);
-                } else {
+                } else
+                {
                     _rxchk1checked = false;
                     rxListChecked.remove(_a);
                     enableTakenSkip(v);
@@ -334,19 +438,23 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
 
         CheckBox _rxCheckBox2 = (CheckBox) findViewById(R.id.rxcheck2);
-        _rxCheckBox2.setOnClickListener(new View.OnClickListener() {
+        _rxCheckBox2.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 Long _a = (Long) ((CheckBox) v).getTag();
 
-                if (((CheckBox) v).isChecked()) {
+                if (((CheckBox) v).isChecked())
+                {
                     _rxchk2checked = true;
                     //Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getText());
                     Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getTag());
                     rxListChecked.add(_a);
                     enableTakenSkip(v);
-                } else {
+                } else
+                {
                     _rxchk2checked = false;
                     rxListChecked.remove(_a);
                     enableTakenSkip(v);
@@ -355,8 +463,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         });
     }
 
-
-    private void enableTakenSkip(View view) {
+    private void enableTakenSkip(View view)
+    {
 
         int _takenColor = 0xffbbbbbb;
         int _skipColor = 0xffbbbbbb;
@@ -370,7 +478,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         Button _symptom8 = (Button) findViewById(R.id.btsymp8);
 
         //if (_rxchk0checked | _rxchk1checked | _rxchk2checked) {
-        if (!rxListChecked.isEmpty()) {
+        if (!rxListChecked.isEmpty())
+        {
             _takenColor = 0xffacc875;
             _skipColor = 0xfffff3a4;
 
@@ -382,7 +491,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
             _symptom6.setVisibility(View.VISIBLE);
             _symptom7.setVisibility(View.VISIBLE);
             _symptom8.setVisibility(View.VISIBLE);
-        } else {
+        } else
+        {
             _symptom1.setVisibility(View.INVISIBLE);
             _symptom2.setVisibility(View.INVISIBLE);
             _symptom3.setVisibility(View.INVISIBLE);
@@ -403,39 +513,43 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         _skip.setBackgroundColor(_skipColor);
     }
 
-
-    private void onSkipClick() {
+    private void onSkipClick()
+    {
         Log.d("CareClient", "-- onSkipClick --");
 
         Button _rxskip = (Button) findViewById(R.id.rxskip);
-        _rxskip.setOnClickListener(new View.OnClickListener() {
+        _rxskip.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 submitCaredPersonData("SKIP");
                 moveTaskToBack(true);
             }
         });
     }
 
-
-    private void onTakenClick() {
+    private void onTakenClick()
+    {
         Log.d("CareClient", "-- onTakenClick --");
 
         Button _rxtaken = (Button) findViewById(R.id.rxtaken);
-        _rxtaken.setOnClickListener(new View.OnClickListener() {
+        _rxtaken.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 submitCaredPersonData("TAKEN");
                 moveTaskToBack(true);
             }
         });
     }
 
-
     /**
      * Capture user data and submit to server
      */
-    private void submitCaredPersonData(String action) {
+    private void submitCaredPersonData(String action)
+    {
         String _action = "(ACTION=" + action + ")";
         String _rxTaken = "";
         String _symptom = "";
@@ -457,48 +571,59 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
          }
          */
 
-        if (!rxListChecked.isEmpty()) {
-            for (Iterator iterator = rxListChecked.iterator(); iterator.hasNext(); ) {
+        if (!rxListChecked.isEmpty())
+        {
+            for (Iterator iterator = rxListChecked.iterator(); iterator.hasNext(); )
+            {
                 _rxTaken += (Long) iterator.next() + ",";
             }
         }
 
 
-        if (_sb1Pressed) {
+        if (_sb1Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp1);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
 
-        if (_sb2Pressed) {
+        if (_sb2Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp2);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb3Pressed) {
+        if (_sb3Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp3);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb4Pressed) {
+        if (_sb4Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp4);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb5Pressed) {
+        if (_sb5Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp5);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb6Pressed) {
+        if (_sb6Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp6);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb7Pressed) {
+        if (_sb7Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp7);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb8Pressed) {
+        if (_sb8Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp8);
             _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
 
-        if (_symptom.equals("")) {
+        if (_symptom.equals(""))
+        {
             _symptom = "-";
         }
 
@@ -517,40 +642,43 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
         String _responseData = null;
 
-        try {
+        try
+        {
 
             String imeiCode = readIMEICode();
             //_responseData = MCareBridgeConnector.sendCaredPersonRxData("353197050130472",_dataSubmitString );
             _responseData = MCareBridgeConnector.sendCaredPersonRxData(imeiCode, _dataSubmitString);
             //Log.d("CareClientActivity XML -- ", _responseData);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             Log.e("CareClientActivity1", e.getMessage(), e);
         }
     }
 
-
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
 
     }
 
-
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
 
         super.onDestroy();
 
     }
 
-
-    private void paintScreen(Context context, CaredPerson caredPerson, ArrayList<RxLineDTO> rxLineDTOs) {
+    private void paintScreen(Context context, CaredPerson caredPerson, ArrayList<RxLineDTO> rxLineDTOs)
+    {
         Log.d("CareClientActivity1", "--calling paintScreen --");
         //Set the RxFor
         TextView _rxFor = (TextView) findViewById(R.id.rxfor);
         _rxFor.setText(caredPerson.getName());
-        rxListReceivedSize =  rxLineDTOs.size();
+        rxListReceivedSize = rxLineDTOs.size();
         paintRxLines1(rxLineDTOs);
 
         paintCurrentHealthConditions(context, caredPerson.getPreExistingCondition());
@@ -558,24 +686,27 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
     }
 
-
     /**
      * @param context
      */
-    private void paintRxLines(Context context, ArrayList<RxLineDTO> rxLineDTOs) {
+    private void paintRxLines(Context context, ArrayList<RxLineDTO> rxLineDTOs)
+    {
         Calendar _c = Calendar.getInstance();
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
         Log.d("CareClientActivity1", "Current Hours --" + _hour);
         int _i = 0;
 
-        for (Iterator iterator = rxLineDTOList.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = rxLineDTOList.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
             RxLines _rxLines = _rxLineDTO.getRxLine();
             Log.d("CareClientActivity1", "--Counter--" + _i);
             Log.d("CareClientActivity-->paintRxLines->", _rxLines.getRx() + "----" + _rxLineDTO.getRxTime());
 
-            if (_rxLineDTO.getRxTime() == _hour) {
-                if (_i == 0) {
+            if (_rxLineDTO.getRxTime() == _hour)
+            {
+                if (_i == 0)
+                {
                     TextView _rxDetails_0 = (TextView) findViewById(R.id.rx1);
                     TextView _rxDosage_0 = (TextView) findViewById(R.id.dose1);
                     TextView _rxDosageTime_0 = (TextView) findViewById(R.id.time1);
@@ -592,7 +723,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
                 }
 
-                if (_i == 1) {
+                if (_i == 1)
+                {
                     TextView _rxDetails_1 = (TextView) findViewById(R.id.rx2);
                     TextView _rxDosage_1 = (TextView) findViewById(R.id.dose2);
                     TextView _rxDosageTime_1 = (TextView) findViewById(R.id.time2);
@@ -608,7 +740,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     _rxCheckBox1.setVisibility(View.VISIBLE);
                 }
 
-                if (_i == 2) {
+                if (_i == 2)
+                {
                     TextView _rxDetails_2 = (TextView) findViewById(R.id.rx3);
                     TextView _rxDosage_2 = (TextView) findViewById(R.id.dose3);
                     TextView _rxDosageTime_2 = (TextView) findViewById(R.id.time3);
@@ -629,8 +762,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         }
     }
 
-
-    private void paintRxLines1(List<RxLineDTO> rxLineDTOs) {
+    private void paintRxLines1(List<RxLineDTO> rxLineDTOs)
+    {
         Calendar _c = Calendar.getInstance();
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
         Log.d("CareClientActivity1", "paintRxLines1 - size of rxLineDTOs" + rxLineDTOs.size());
@@ -639,21 +772,26 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
         //Check to enable or disable Next Button
         Button _next = (Button) findViewById(R.id.nextRx);
-        if (rxListReceivedSize <= 3) {
+        if (rxListReceivedSize <= 3)
+        {
             _next.setVisibility(View.INVISIBLE);
-        } else {
+        } else
+        {
             _next.setVisibility(View.VISIBLE);
             _next.setBackgroundColor(Color.parseColor("#309060"));
         }
 
 
-        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
             RxLines _rxLines = _rxLineDTO.getRxLine();
             //Log.d("CareClientActivity1------------->", _rxLines.getRx());
 
-            if (_rxLineDTO.getRxTime() == _hour) {
-                if (_i == 0) {
+            if (_rxLineDTO.getRxTime() == _hour)
+            {
+                if (_i == 0)
+                {
                     Log.d("CareClientActivity1", "Writing Row # :" + _i);
                     TextView _rxDetails_0 = (TextView) findViewById(R.id.rx1);
                     TextView _rxDosage_0 = (TextView) findViewById(R.id.dose1);
@@ -669,8 +807,10 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
                     //Log.d("CareClientActivity1", "--checking for checkbox value --" + rxListChecked.contains(_rxLineDTO.getRxLineId()));
 
-                    if (rxListChecked.contains(_rxLineDTO.getRxLineId())) {
-                        if (!_rxCheckBox0.isChecked()) {
+                    if (rxListChecked.contains(_rxLineDTO.getRxLineId()))
+                    {
+                        if (!_rxCheckBox0.isChecked())
+                        {
                             _rxCheckBox0.toggle();
                         }
                     }
@@ -678,7 +818,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     _rxCheckBox0.setVisibility(View.VISIBLE);
                     _rxCheckBox0.setClickable(true);
                     //In this block check if the Rx has already been taken if Yes, do not allow it to clicked again.
-                    if (consumedRxList != null & consumedRxList.contains(_rxLineDTO.getRxLineId())) {
+                    if (consumedRxList != null & consumedRxList.contains(_rxLineDTO.getRxLineId()))
+                    {
 
                         _rxCheckBox0.setClickable(false);
                         _rxCheckBox0.setVisibility(View.INVISIBLE);
@@ -695,7 +836,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
                 }
 
-                if (_i == 1) {
+                if (_i == 1)
+                {
                     Log.d("CareClientActivity1", "Writing Row # :" + _i);
                     TextView _rxDetails_1 = (TextView) findViewById(R.id.rx2);
                     TextView _rxDosage_1 = (TextView) findViewById(R.id.dose2);
@@ -715,8 +857,10 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     _rxCheckBox1.setTag(new Long(_rxLineDTO.getRxLineId()));
 
 
-                    if (rxListChecked.contains(_rxLineDTO.getRxLineId())) {
-                        if (!_rxCheckBox1.isChecked()) {
+                    if (rxListChecked.contains(_rxLineDTO.getRxLineId()))
+                    {
+                        if (!_rxCheckBox1.isChecked())
+                        {
                             _rxCheckBox1.toggle();
                         }
                     }
@@ -724,7 +868,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     _rxCheckBox1.setVisibility(View.VISIBLE);
                     _rxCheckBox1.setClickable(true);
                     //In this block check if the Rx has already been taken if Yes, do not allow it to clicked again.
-                    if (consumedRxList != null & consumedRxList.contains(_rxLineDTO.getRxLineId())) {
+                    if (consumedRxList != null & consumedRxList.contains(_rxLineDTO.getRxLineId()))
+                    {
                         _rxCheckBox1.setClickable(false);
                         _rxCheckBox1.setVisibility(View.INVISIBLE);
                         _rxDetails_1.setTextColor(Color.LTGRAY);
@@ -733,7 +878,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     }
                 }
 
-                if (_i == 2) {
+                if (_i == 2)
+                {
                     Log.d("CareClientActivity1", "Writing Row # :" + _i);
                     TextView _rxDetails_2 = (TextView) findViewById(R.id.rx3);
                     TextView _rxDosage_2 = (TextView) findViewById(R.id.dose3);
@@ -753,8 +899,10 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     _rxCheckBox2.setTag(new Long(_rxLineDTO.getRxLineId()));
 
 
-                    if (rxListChecked.contains(_rxLineDTO.getRxLineId())) {
-                        if (!_rxCheckBox2.isChecked()) {
+                    if (rxListChecked.contains(_rxLineDTO.getRxLineId()))
+                    {
+                        if (!_rxCheckBox2.isChecked())
+                        {
                             _rxCheckBox2.toggle();
                         }
                     }
@@ -762,7 +910,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                     _rxCheckBox2.setVisibility(View.VISIBLE);
                     _rxCheckBox2.setClickable(true);
                     //In this block check if the Rx has already been taken if Yes, do not allow it to clicked again.
-                    if (consumedRxList != null & consumedRxList.contains(_rxLineDTO.getRxLineId())) {
+                    if (consumedRxList != null & consumedRxList.contains(_rxLineDTO.getRxLineId()))
+                    {
                         _rxCheckBox2.setClickable(false);
                         _rxCheckBox2.setVisibility(View.INVISIBLE);
                         _rxDetails_2.setTextColor(Color.LTGRAY);
@@ -774,13 +923,15 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
                 _i++;
             }
 
-            if (rxListCurrPointer == 0) {
+            if (rxListCurrPointer == 0)
+            {
                 rxListCurrPointer += 3;
             }
         }
     }
 
-    private void initRxChart() {
+    private void initRxChart()
+    {
         Log.d("CareClientActivity1", "Calling initRxChart --");
 
         TextView _rxDetails_0 = (TextView) findViewById(R.id.rx1);
@@ -817,20 +968,23 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         _rxCheckBox2.setClickable(false);
     }
 
-
-    public void onClickSymptoms(View view) {
+    public void onClickSymptoms(View view)
+    {
         //Button _symptom = (Button) findViewById(view.getId());
         //_symptom.setBackgroundColor(0xFF84BB6C);
         Button _symptom = null;
 
-        switch (view.getId()) {
+        switch (view.getId())
+        {
 
             case R.id.btsymp1:
                 _symptom = (Button) findViewById(R.id.btsymp1);
-                if (_sb1Pressed) {
+                if (_sb1Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb1Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb1Pressed = true;
                 }
@@ -838,10 +992,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp2:
                 _symptom = (Button) findViewById(R.id.btsymp2);
-                if (_sb2Pressed) {
+                if (_sb2Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb2Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb2Pressed = true;
                 }
@@ -849,10 +1005,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp3:
                 _symptom = (Button) findViewById(R.id.btsymp3);
-                if (_sb3Pressed) {
+                if (_sb3Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb3Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb3Pressed = true;
                 }
@@ -860,10 +1018,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp4:
                 _symptom = (Button) findViewById(R.id.btsymp4);
-                if (_sb4Pressed) {
+                if (_sb4Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb4Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb4Pressed = true;
                 }
@@ -871,10 +1031,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp5:
                 _symptom = (Button) findViewById(R.id.btsymp5);
-                if (_sb5Pressed) {
+                if (_sb5Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb5Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb5Pressed = true;
                 }
@@ -882,10 +1044,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp6:
                 _symptom = (Button) findViewById(R.id.btsymp6);
-                if (_sb6Pressed) {
+                if (_sb6Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb6Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb6Pressed = true;
                 }
@@ -893,10 +1057,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp7:
                 _symptom = (Button) findViewById(R.id.btsymp7);
-                if (_sb7Pressed) {
+                if (_sb7Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb7Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb7Pressed = true;
                 }
@@ -904,10 +1070,12 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
             case R.id.btsymp8:
                 _symptom = (Button) findViewById(R.id.btsymp8);
-                if (_sb8Pressed) {
+                if (_sb8Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb8Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb8Pressed = true;
                 }
@@ -916,8 +1084,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
     }
 
-
-    private void paintCurrentHealthConditions(Context context, PreExistingCondition preExistingCondition) {
+    private void paintCurrentHealthConditions(Context context, PreExistingCondition preExistingCondition)
+    {
         Condition _condition = preExistingCondition.getConditionList().get(0);
         List<Symptoms> _sympList = _condition.getSymptoms();
 
@@ -963,11 +1131,11 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
 
     }
 
-
     /**
      *
      */
-    private void setUpAlarm(ArrayList<RxLineDTO> rxLineDTOs) {
+    private void setUpAlarm(ArrayList<RxLineDTO> rxLineDTOs)
+    {
 
         Log.d("CareClientActivity1", "--calling setUpAlarm --");
 
@@ -975,9 +1143,11 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
         Log.d("CareClientActivity1", "Current Hours --" + _hour);
 
-        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
-            if (_rxLineDTO.getRxTime() >= _hour) {
+            if (_rxLineDTO.getRxTime() >= _hour)
+            {
                 Log.d("CareClientActivity1", "Setting up Alarm" + _rxLineDTO.getRxTime() + " -- "
                         + _rxLineDTO.getRxLineId()
                         + " -- "
@@ -998,35 +1168,38 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         }
     }
 
-
     /**
      * Read IMEI code
      */
-    private String readIMEICode() {
+    private String readIMEICode()
+    {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String _deviceId = telephonyManager.getDeviceId();
         Log.i("CareClientActivity1", _deviceId);
         return _deviceId;
     }
 
-
     /**
      * @param view
      */
-    public void readNext(View view) {
+    public void readNext(View view)
+    {
         CheckBox _rxCheckBox0 = (CheckBox) findViewById(R.id.rxcheck0);
         CheckBox _rxCheckBox1 = (CheckBox) findViewById(R.id.rxcheck1);
         CheckBox _rxCheckBox2 = (CheckBox) findViewById(R.id.rxcheck2);
 
-        if (_rxCheckBox0.isChecked()) {
+        if (_rxCheckBox0.isChecked())
+        {
             _rxCheckBox0.toggle();
         }
 
-        if (_rxCheckBox1.isChecked()) {
+        if (_rxCheckBox1.isChecked())
+        {
             _rxCheckBox1.toggle();
         }
 
-        if (_rxCheckBox2.isChecked()) {
+        if (_rxCheckBox2.isChecked())
+        {
             _rxCheckBox2.toggle();
         }
 
@@ -1034,78 +1207,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
         paintRxLines1(rxList);
     }
 
-
-    /**
-     * @param rxList
-     * @param currPos
-     * @return
-     */
-    public static List<RxLineDTO> readNext(List<RxLineDTO> rxList, int currPos) {
-        Log.i("CareClientActivity1", "readNext.rxListCurrPointer ========> " + currPos);
-        //Log.i("CareClientActivity1", "readNext.rxList.size ========> " + rxList.size());
-
-        int _endofList = -1;
-        int _startofList = 0;
-        List<RxLineDTO> _subList = null;
-
-        if (currPos > rxList.size()) {
-            currPos = 0;
-            rxListCurrPointer = _startofList + 3;
-            _startofList = currPos;
-        } else {
-            _startofList = currPos;
-            rxListCurrPointer = _startofList + 3;
-        }
-
-        _endofList = _startofList + 3;
-
-
-        if (_endofList > rxList.size()) {
-            //_startofList = _startofList - 1;
-            _endofList = rxList.size();
-        }
-
-        Log.i("CareClientActivity1", "readNext fetching from  => "
-                + (_startofList) + " to = " + (_endofList));
-        _subList = rxList.subList(_startofList, _endofList);
-
-        Log.i("CareClientActivity1", "readNext._subList.size ========> " + _subList.size());
-
-
-        for (Iterator iterator = _subList.iterator(); iterator.hasNext(); ) {
-            RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
-            System.out.println(" --------> _rxLine = " + _rxLineDTO.getRxLine().getRx() + "---" + _rxLineDTO.getRxLine().getScheduleByHours());
-        }
-
-        return _subList;
-    }
-
-
-    /**
-     * This method spilts the rxconsumed string into a Array
-     *
-     * @param rxConsumed
-     */
-    private static void splitRxConsumed(String rxConsumed) {
-
-        Log.d("CareClientActivity1", "--calling splitRxConsumed -- " + rxConsumed);
-
-        ArrayList<Long> _consumedRxList = new ArrayList<Long>();
-        if (rxConsumed != null && !rxConsumed.equals("-")) {
-            StringTokenizer _st = new StringTokenizer(rxConsumed, ",");
-
-            while (_st.hasMoreElements()) {
-
-                Long _rxId = new Long((String) _st.nextElement());
-
-                _consumedRxList.add(_rxId);
-            }
-        }
-        consumedRxList = _consumedRxList;
-    }
-
-
-    private void sendUpdateNotification(String caredPersonName) {
+    private void sendUpdateNotification(String caredPersonName)
+    {
         // dj start
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
@@ -1135,7 +1238,8 @@ public class CareClientActivity1 extends Activity implements View.OnClickListene
     }
 
 
-    private void sendRxMissedNotification(String caredPersonName) {
+    private void sendRxMissedNotification(String caredPersonName)
+    {
         // dj start
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);

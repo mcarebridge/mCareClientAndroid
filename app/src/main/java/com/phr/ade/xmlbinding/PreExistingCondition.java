@@ -5,23 +5,28 @@ import java.util.List;
 /**
  * Created by deejay on 9/23/2014.
  */
-public class PreExistingCondition {
+public class PreExistingCondition
+{
     private long id;
     private List<Condition> conditionList;
 
-    public long getId() {
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
-    public List<Condition> getConditionList() {
+    public List<Condition> getConditionList()
+    {
         return conditionList;
     }
 
-    public void setConditionList(List<Condition> conditionList) {
+    public void setConditionList(List<Condition> conditionList)
+    {
         this.conditionList = conditionList;
     }
 }

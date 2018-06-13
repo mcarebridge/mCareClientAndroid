@@ -1,11 +1,13 @@
 package com.phr.ade.util;
 
 
-public interface CareClientConstants {
+public interface CareClientConstants
+{
 
     //Message for submitting or skipping Rx
     int RXTAKEN_SUCCESS = 0;
     int RXTAKEN_CONN_ERROR = -1;
+    int MOBILE_DB_ERR = -2;
     int RXTAKEN_ERROR = -99;
 
     //Message for Phone error

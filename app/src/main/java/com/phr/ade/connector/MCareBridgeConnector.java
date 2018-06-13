@@ -1,5 +1,20 @@
 package com.phr.ade.connector;
 
+import android.os.StrictMode;
+import android.util.Log;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,30 +31,11 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.StrictMode;
-import android.util.Log;
-
-import com.phr.ade.util.CareClientUtil;
-
 /**
  * Created by deejay on 10/27/2014.
  */
-public class MCareBridgeConnector {
+public class MCareBridgeConnector
+{
 
     private static final String TAG = "MCareBridgeConnector";
     //private static final String BASE_URL = "http://caregiver.mcarebridge.com/health/";
@@ -58,7 +54,8 @@ public class MCareBridgeConnector {
      * @throws Exception
      */
     public static String synchMobileUsingIMEI(String imeiCode)
-            throws Exception {
+    throws Exception
+    {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         HttpResponse response = null;
@@ -105,13 +102,15 @@ public class MCareBridgeConnector {
                 "_authStr ---------------------->"
                         + _authStr);
 
-        if (_authStr.equalsIgnoreCase("AUTH-SUCCESS")) {
+        if (_authStr.equalsIgnoreCase("AUTH-SUCCESS"))
+        {
             synchServerDataString = readHTTPResponse(client, httppost, response);
             smsSent = false;
             _data = extractRxData(synchServerDataString);
-//            Log.i(TAG,
-//                    "_mobileResponse ---------------------->" + _data);
-        } else if (_authStr.equalsIgnoreCase("AUTH-FAILED")) {
+            Log.i(TAG,
+                    "_mobileResponse ---------------------->" + _data);
+        } else if (_authStr.equalsIgnoreCase("AUTH-FAILED"))
+        {
             _data = "AUTH-FAILED";
         }
 
@@ -125,7 +124,8 @@ public class MCareBridgeConnector {
      * @throws Exception
      */
     public static String sendCaredPersonRxData(String imeiCode, String rxData)
-            throws Exception {
+    throws Exception
+    {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         HttpResponse response = null;
@@ -168,7 +168,8 @@ public class MCareBridgeConnector {
                 "_authStr ---------------------->"
                         + _authStr);
 
-        if (_authStr.equalsIgnoreCase("AUTH-SUCCESS")) {
+        if (_authStr.equalsIgnoreCase("AUTH-SUCCESS"))
+        {
             synchServerDataString = readHTTPResponse(client, httppost, response);
             Log.i(TAG,
                     "_mobileResponse ---------------------->"
@@ -185,18 +186,21 @@ public class MCareBridgeConnector {
      * @throws IOException
      */
     private static String readHTTPResponse(HttpClient client,
-                                           HttpPost httppost, HttpResponse response) throws IOException {
+                                           HttpPost httppost, HttpResponse response) throws IOException
+    {
         // Get hold of the response entity
         HttpEntity entity = response.getEntity();
         String responseString = null;
 
         // If the response does not enclose an entity, there is no need
         // to worry about connection release
-        if (entity != null) {
+        if (entity != null)
+        {
 
             InputStream instream = null;
 
-            try {
+            try
+            {
                 instream = entity.getContent();
 
                 GZIPInputStream zis = new GZIPInputStream(
@@ -206,13 +210,17 @@ public class MCareBridgeConnector {
                         new InputStreamReader(zis));
                 // do something useful with the response
                 responseString = reader.readLine();
-            } catch (IOException ex) {
+            }
+            catch (IOException ex)
+            {
 
                 // In case of an IOException the connection will be released
                 // back to the connection manager automatically
                 throw ex;
 
-            } catch (RuntimeException ex) {
+            }
+            catch (RuntimeException ex)
+            {
 
                 // In case of an unexpected exception you may want to abort
                 // the HTTP request in order to shut down the underlying
@@ -220,7 +228,9 @@ public class MCareBridgeConnector {
                 httppost.abort();
                 throw ex;
 
-            } finally {
+            }
+            finally
+            {
 
                 // Closing the input stream will trigger connection release
                 instream.close();
@@ -236,13 +246,13 @@ public class MCareBridgeConnector {
 
 
     /**
-     *
      * @param serverData
      * @return
      */
-    private static String extractRxData(String serverData) {
+    private static String extractRxData(String serverData)
+    {
 
-        //Log.d("MCareBridgeConnector", "--data received --" + serverData);
+        Log.d("MCareBridgeConnector", "--data received --" + serverData);
 
         StringTokenizer _st = new StringTokenizer(serverData, "()");
         String _envelope = (String) _st.nextElement();
@@ -269,7 +279,8 @@ public class MCareBridgeConnector {
 
         Log.d("MCareBridgeConnector", "-- _rxskipped after substring --" + _rxSkipped);
 
-        if (!_rxSkipped.equals("-")) {
+        if (!_rxSkipped.equals("-"))
+        {
             Hashtable _cgRxMap = mapRxSkipped(_rxSkipped);
             sendSMSForRxSkipped(_cgRxMap, _caredPersonName);
         }
@@ -280,20 +291,23 @@ public class MCareBridgeConnector {
     /**
      * @param cgRxMap
      */
-    private static void sendSMSForRxSkipped(Hashtable cgRxMap, String caredPersonName) {
+    private static void sendSMSForRxSkipped(Hashtable cgRxMap, String caredPersonName)
+    {
 
         Set _keys = cgRxMap.keySet();
         Calendar _c = Calendar.getInstance();
         int _currentHour = _c.get(Calendar.HOUR_OF_DAY);
 
-        if (_currentHour == 0) {
+        if (_currentHour == 0)
+        {
             _currentHour = 23;
         }
         {
             --_currentHour;
         }
 
-        for (Iterator iterator = _keys.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = _keys.iterator(); iterator.hasNext(); )
+        {
             String _message = "Dear ";
             String _cgNameCell = (String) iterator.next();
             String _cgName = _cgNameCell.substring(0, _cgNameCell.indexOf(":"));
@@ -304,15 +318,19 @@ public class MCareBridgeConnector {
 
             List _rxList = (List) cgRxMap.get(_cgNameCell);
 
-            for (Iterator iterator1 = _rxList.iterator(); iterator1.hasNext(); ) {
+            for (Iterator iterator1 = _rxList.iterator(); iterator1.hasNext(); )
+            {
                 String _rxIdName = (String) iterator1.next();
                 _message += _rxIdName.substring(_rxIdName.indexOf(":") + 1, _rxIdName.length()) + " ";
             }
 
             _message += "scheduled at " + _currentHour + " Hrs";
 
-            if (!smsSent) {
+            //@todo : Fix  SMS module to use Whatapp / email too
+            if (!smsSent)
+            {
                 // 04/09 - Stopping SMS module for sometime.
+
                 //CareClientUtil.sendSMS(_cgCell, _message);
                 smsSent = true;
             }
@@ -326,7 +344,8 @@ public class MCareBridgeConnector {
      * @param serverData
      * @return
      */
-    private static String extractAuthMsg(String serverData) {
+    private static String extractAuthMsg(String serverData)
+    {
         StringTokenizer _st = new StringTokenizer(serverData, "()");
         String _authMsg = (String) _st.nextElement();
         String _authStr = _authMsg.substring(_authMsg.indexOf(":") + 1,
@@ -334,11 +353,13 @@ public class MCareBridgeConnector {
         return _authStr;
     }
 
-    public static String getRxConsumed() {
+    public static String getRxConsumed()
+    {
         return rxConsumed;
     }
 
-    private static void setRxConsumed(String rxConsumed) {
+    private static void setRxConsumed(String rxConsumed)
+    {
 
         String _rxconsumed = rxConsumed.substring(rxConsumed.indexOf(":") + 1,
                 rxConsumed.length());
@@ -352,14 +373,16 @@ public class MCareBridgeConnector {
      *
      * @param rxskippedExtract
      */
-    private static Hashtable mapRxSkipped(String rxskippedExtract) {
+    private static Hashtable mapRxSkipped(String rxskippedExtract)
+    {
 
         Log.d("MCareBridgeConnector", "-- reading message  --" + rxskippedExtract);
 
         StringTokenizer _st = new StringTokenizer(rxskippedExtract, "{}");
         Hashtable<String, List> _h = new Hashtable<String, List>();
 
-        while (_st.hasMoreTokens()) {
+        while (_st.hasMoreTokens())
+        {
             ArrayList<String> _rxList = new ArrayList<String>();
             String _cgAndRxString = (String) _st.nextElement();
 
@@ -369,7 +392,8 @@ public class MCareBridgeConnector {
             String _id = (String) _st1.nextElement();
             Log.d("MCareBridgeConnector", "-- _id --" + _id);
 
-            while (_st1.hasMoreTokens()) {
+            while (_st1.hasMoreTokens())
+            {
 
                 String _rxIdName = (String) _st1.nextElement();
 

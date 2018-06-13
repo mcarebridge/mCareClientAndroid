@@ -6,7 +6,8 @@ package com.phr.ade.service;
 
 import java.util.HashMap;
 
-public interface OnTaskDoneListener {
+public interface OnTaskDoneListener
+{
     void onTaskDone(HashMap mCareKeyValue);
 
     void onError();

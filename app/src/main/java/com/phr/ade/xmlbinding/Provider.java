@@ -3,7 +3,8 @@ package com.phr.ade.xmlbinding;
 /**
  * Created by deejay on 9/23/2014.
  */
-public class Provider {
+public class Provider
+{
 
     private long id;
     private String name;
@@ -12,51 +13,63 @@ public class Provider {
     private String fixed;
     private String contactPerson;
 
-    public long getId() {
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
-    public String getContact() {
+    public String getContact()
+    {
         return contact;
     }
 
-    public void setContact(String contact) {
+    public void setContact(String contact)
+    {
         this.contact = contact;
     }
 
-    public String getCell() {
+    public String getCell()
+    {
         return cell;
     }
 
-    public void setCell(String cell) {
+    public void setCell(String cell)
+    {
         this.cell = cell;
     }
 
-    public String getFixed() {
+    public String getFixed()
+    {
         return fixed;
     }
 
-    public void setFixed(String fixed) {
+    public void setFixed(String fixed)
+    {
         this.fixed = fixed;
     }
 
-    public String getContactPerson() {
+    public String getContactPerson()
+    {
         return contactPerson;
     }
 
-    public void setContactPerson(String contactPerson) {
+    public void setContactPerson(String contactPerson)
+    {
         this.contactPerson = contactPerson;
     }
 }

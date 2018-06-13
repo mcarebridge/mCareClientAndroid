@@ -5,7 +5,8 @@ import java.util.List;
 /**
  * Created by deejay on 9/23/2014.
  */
-public class RxPrescribed {
+public class RxPrescribed
+{
 
     private long id;
     private String rxTag;
@@ -13,43 +14,53 @@ public class RxPrescribed {
     private CareGiver careGiver;
     private List<RxLines> rxLinesList;
 
-    public long getId() {
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
-    public String getRxTag() {
+    public String getRxTag()
+    {
         return rxTag;
     }
 
-    public void setRxTag(String rxTag) {
+    public void setRxTag(String rxTag)
+    {
         this.rxTag = rxTag;
     }
 
-    public Physician getPhysician() {
+    public Physician getPhysician()
+    {
         return physician;
     }
 
-    public void setPhysician(Physician physician) {
+    public void setPhysician(Physician physician)
+    {
         this.physician = physician;
     }
 
-    public CareGiver getCareGiver() {
+    public CareGiver getCareGiver()
+    {
         return careGiver;
     }
 
-    public void setCareGiver(CareGiver careGiver) {
+    public void setCareGiver(CareGiver careGiver)
+    {
         this.careGiver = careGiver;
     }
 
-    public List<RxLines> getRxLinesList() {
+    public List<RxLines> getRxLinesList()
+    {
         return rxLinesList;
     }
 
-    public void setRxLinesList(List<RxLines> rxLinesList) {
+    public void setRxLinesList(List<RxLines> rxLinesList)
+    {
         this.rxLinesList = rxLinesList;
     }
 }

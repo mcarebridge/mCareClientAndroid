@@ -1,8 +1,6 @@
 package com.phr.ade.service;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,29 +18,32 @@ import com.phr.ade.xmlbinding.CaredPerson;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
 
-public class ClientService1 extends IntentService {
+public class ClientService1 extends IntentService
+{
 
-    public ClientService1() {
+    public ClientService1()
+    {
         super("ClientService1");
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(Intent intent)
+    {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(Intent intent)
+    {
         Log.d("ClientService1", "--calling onHandleIntent --");
         //Uri _uri = intent.getData();
         //Log.d("ClientService", "uri path -- " + _uri.getPath());
     }
 
     @Override
-    public void onCreate() {
+    public void onCreate()
+    {
 
         // TODO Auto-generated method stub
         super.onCreate();
@@ -56,7 +57,8 @@ public class ClientService1 extends IntentService {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public void onStart(Intent intent, int startId)
+    {
         super.onStart(intent, startId);
         Log.d("ClientService1", "--calling onStart -- " + startId);
         String _responseData = null;
@@ -73,7 +75,8 @@ public class ClientService1 extends IntentService {
          setUpAlarm(_rxLineDTOList);
          **/
 
-        try {
+        try
+        {
 
             String imeiCode = readIMEICode();
             //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353322068558368");
@@ -85,30 +88,40 @@ public class ClientService1 extends IntentService {
             _serviceCall = true;
             _rxSynchStatus = "SUCCESS";
 
-        } catch (SocketTimeoutException s) {
+        }
+        catch (SocketTimeoutException s)
+        {
             Log.e("ClientService1", s.getMessage(), s);
             s.printStackTrace();
             _rxSynchStatus = "TIMEOUT";
-        } catch (UnknownHostException u) {
+        }
+        catch (UnknownHostException u)
+        {
             Log.e("ClientService1", u.getMessage(), u);
             u.printStackTrace();
             //_rxSynchStatus = "TIMEOUT";
             _rxSynchStatus = "HOST_NOT_FOUND";
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Log.e("ClientService1", e.getMessage(), e);
             e.printStackTrace();
             //_rxSynchStatus = "ERROR";
             _rxSynchStatus = e.getMessage();
 
-        } finally {
+        }
+        finally
+        {
 
             boolean _isRxReady = false;
             intent.setAction(Intent.ACTION_MAIN);
             //intent.addCategory(Intent.CATEGORY_LAUNCHER);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //This is the case where Auth is not failed and sync is successful
-            if (_responseData != null) {
-                if (_rxSynchStatus.equals("SUCCESS") && !(_responseData.equalsIgnoreCase("AUTH-FAILED"))) {
+            if (_responseData != null)
+            {
+                if (_rxSynchStatus.equals("SUCCESS") && !(_responseData.equalsIgnoreCase("AUTH-FAILED")))
+                {
                     intent.putExtra("XML_DATA", _responseData.toCharArray());
                     intent.putExtra("RX_CONSUMED", _rxConsumed.toCharArray());
                     intent.putExtra("RX_ASYNC", _rxSynch.toCharArray());
@@ -119,7 +132,8 @@ public class ClientService1 extends IntentService {
                     ArrayList<RxLineDTO> _rxLineDTOList = CareXMLReader.extractRxTime(_caredPerson);
                     Log.d("ClientService1", "--size of List -- " + _rxLineDTOList.size());
                     _isRxReady = CareClientUtil.checkTimeToTriggerRx(_rxLineDTOList);
-                } else {
+                } else
+                {
                     intent.putExtra("AUTH", new String("AUTH-FAILED").toCharArray());
                 }
             }
@@ -132,37 +146,43 @@ public class ClientService1 extends IntentService {
 
             Log.d("ClientService1", "_rxSynchStatus = " + _rxSynchStatus + " _isRxReady = " + _isRxReady);
 
-            if (_rxSynchStatus.equals("SUCCESS")) {
-                if (_isRxReady) {
+            if (_rxSynchStatus.equals("SUCCESS"))
+            {
+                if (_isRxReady)
+                {
                     Log.d("ClientService1", "-- start Activity Triggered Point 1--");
                     Toast.makeText(this, "Rx scheduled -- Loading Schedule", Toast.LENGTH_LONG)
                             .show();
                     //startActivity(intent);
-                }
-                else{
+                } else
+                {
                     Toast.makeText(this, "Relax. No scheduled medication.", Toast.LENGTH_LONG)
                             .show();
                 }
-            } else if (_rxSynchStatus.equals("TIMEOUT")) {
+            } else if (_rxSynchStatus.equals("TIMEOUT"))
+            {
                 Toast.makeText(this, "Error : Connection Timeout", Toast.LENGTH_LONG)
                         .show();
-            } else {
+            } else
+            {
                 Toast.makeText(this, "Error : Unexpected error. Please report admin@mcarebridge.com", Toast.LENGTH_LONG)
                         .show();
             }
         }
-        Log.d("ClientService1" , "In ClientService1 class ---> triggering intent to call CareClientActivity2A");
+        Log.d("ClientService1", "In ClientService1 class ---> triggering intent to call CareClientActivity2A");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
     }
 
-    private String readIMEICode() {
+    private String readIMEICode()
+    {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String _deviceId = telephonyManager.getDeviceId();
         Log.i("ClientService1", _deviceId);

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">mCareBridge</string>
+    <string name="sevha">sevhā</string>
+    <string name="app_name">sevhā</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
@@ -11,6 +12,7 @@
     <string name="notification_hint">User Notification</string>
     <string name="reminder">Reminder Name</string>
     <string name="done">Done</string>
+    <string name="copyright">Copyright 2018 sevhā</string>
 
     <!-- Rx Box -->
     <string name="rxreminder">Rx reminder</string>

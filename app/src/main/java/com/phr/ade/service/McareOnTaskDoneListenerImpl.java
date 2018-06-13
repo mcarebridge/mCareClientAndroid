@@ -13,18 +13,21 @@ import java.util.HashMap;
  * Created by dheerajs on 4/9/2017.
  */
 
-public class McareOnTaskDoneListenerImpl implements OnTaskDoneListener {
+public class McareOnTaskDoneListenerImpl implements OnTaskDoneListener
+{
 
     private Context context;
 
-    public McareOnTaskDoneListenerImpl(Context context) {
+    public McareOnTaskDoneListenerImpl(Context context)
+    {
 
         this.context = context;
     }
 
 
     @Override
-    public void onTaskDone(HashMap mCareKeyValue) {
+    public void onTaskDone(HashMap mCareKeyValue)
+    {
 
         Log.d("McareOnTaskDoneListenerImpl", "-- onTaskDone --");
 
@@ -42,7 +45,8 @@ public class McareOnTaskDoneListenerImpl implements OnTaskDoneListener {
         intent.setComponent(cn);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if (_auth.equalsIgnoreCase("AUTH-PASSED")) {
+        if (_auth.equalsIgnoreCase("AUTH-PASSED"))
+        {
             intent.putExtra("CARED_PERSON", _careedPerson.toCharArray());
             intent.putExtra("XML_DATA", _xmlData.toCharArray());
         }
@@ -57,7 +61,8 @@ public class McareOnTaskDoneListenerImpl implements OnTaskDoneListener {
     }
 
     @Override
-    public void onError() {
+    public void onError()
+    {
         Log.e("McareOnTaskDoneListenerImpl", "-- onTaskDone --");
     }
 }

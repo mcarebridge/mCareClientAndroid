@@ -1,8 +1,6 @@
 package android.ade.phr.com.careclient;
 
-import android.app.Application;
 import android.app.Service;
-import android.test.ApplicationTestCase;
 import android.test.ServiceTestCase;
 
 import com.phr.ade.connector.CareXMLReader;

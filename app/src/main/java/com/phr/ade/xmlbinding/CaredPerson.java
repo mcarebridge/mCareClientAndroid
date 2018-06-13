@@ -5,51 +5,62 @@ import java.util.List;
 /**
  * Created by deejay on 9/23/2014.
  */
-public class CaredPerson {
+public class CaredPerson
+{
 
     private long id;
     private String name;
     private List<RxPrescribed> rxPrescribedList;
     private PreExistingCondition preExistingCondition;
-    private  EmergencyResponse emergencyResponse;
+    private EmergencyResponse emergencyResponse;
 
-    public long getId() {
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
-    public List<RxPrescribed> getRxPrescribedList() {
+    public List<RxPrescribed> getRxPrescribedList()
+    {
         return rxPrescribedList;
     }
 
-    public void setRxPrescribedList(List<RxPrescribed> rxPrescribedList) {
+    public void setRxPrescribedList(List<RxPrescribed> rxPrescribedList)
+    {
         this.rxPrescribedList = rxPrescribedList;
     }
 
-    public PreExistingCondition getPreExistingCondition() {
+    public PreExistingCondition getPreExistingCondition()
+    {
         return preExistingCondition;
     }
 
-    public void setPreExistingCondition(PreExistingCondition preExistingCondition) {
+    public void setPreExistingCondition(PreExistingCondition preExistingCondition)
+    {
         this.preExistingCondition = preExistingCondition;
     }
 
-    public EmergencyResponse getEmergencyResponse() {
+    public EmergencyResponse getEmergencyResponse()
+    {
         return emergencyResponse;
     }
 
-    public void setEmergencyResponse(EmergencyResponse emergencyResponse) {
+    public void setEmergencyResponse(EmergencyResponse emergencyResponse)
+    {
         this.emergencyResponse = emergencyResponse;
     }
 }

@@ -33,7 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class CareClientActivity extends Activity implements View.OnClickListener {
+public class CareClientActivity extends Activity implements View.OnClickListener
+{
 
     private static boolean alarmSet = false;
     private static boolean _sb1Pressed = false;
@@ -51,7 +52,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         Log.d("CareClientActivity1", "--calling onCreate --");
 
@@ -65,7 +67,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
         //setUpAlarm(_rxLineDTOList);
 
-        if (!alarmSet) {
+        if (!alarmSet)
+        {
             Calendar cur_cal = Calendar.getInstance();
             cur_cal.setTimeInMillis(System.currentTimeMillis());
             cur_cal.set(Calendar.HOUR_OF_DAY, 00);
@@ -90,7 +93,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
         Log.d("CareClientActivity1", "--onStart--");
 
@@ -100,13 +104,16 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
         String _responseData = null;
 
-        try {
+        try
+        {
 
             String imeiCode = readIMEICode();
             //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353197050130472");
             _responseData = MCareBridgeConnector.synchMobileUsingIMEI(imeiCode);
             Log.d("CareClientActivity XML -- ", _responseData);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             Log.e("CareClientActivity1", e.getMessage(), e);
         }
@@ -115,14 +122,16 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
         String _a = "ERR:NO DATA PASSED BY INTENT";
 
-        if (_responseData != null) {
+        if (_responseData != null)
+        {
             //_a = new String(_xmlData);
             //Log.d("XML Received--", _a);
             _a = _responseData;
             CaredPerson _caredPerson = CareXMLReader.bindXML(_responseData);
             ArrayList<RxLineDTO> _rxLineDTOList = CareXMLReader.extractRxTime(_caredPerson);
             paintScreen(this, _caredPerson, _rxLineDTOList);
-        } else {
+        } else
+        {
             TextView _rxFor = (TextView) findViewById(R.id.rxfor);
             TextView _rxFor1 = (TextView) findViewById(R.id.rxfor1);
             _rxFor.setText("Cared Person Not Found");
@@ -136,44 +145,53 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.care_client, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
 
 
     }
 
 
-    public void addRxCheckBoxLister() {
+    public void addRxCheckBoxLister()
+    {
         Log.d("CareClientActivity1", "-- checkBoxClicked Method --");
 
         CheckBox _rxCheckBox0 = (CheckBox) findViewById(R.id.rxcheck0);
-        _rxCheckBox0.setOnClickListener(new View.OnClickListener() {
+        _rxCheckBox0.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                if (((CheckBox) v).isChecked()) {
+            public void onClick(View v)
+            {
+                if (((CheckBox) v).isChecked())
+                {
                     _rxchk0checked = true;
                     //Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getText());
                     Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getTag());
                     enableTakenSkip(v);
-                } else {
+                } else
+                {
                     _rxchk0checked = false;
                     enableTakenSkip(v);
                 }
@@ -182,15 +200,19 @@ public class CareClientActivity extends Activity implements View.OnClickListener
         });
 
         CheckBox _rxCheckBox1 = (CheckBox) findViewById(R.id.rxcheck1);
-        _rxCheckBox1.setOnClickListener(new View.OnClickListener() {
+        _rxCheckBox1.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                if (((CheckBox) v).isChecked()) {
+            public void onClick(View v)
+            {
+                if (((CheckBox) v).isChecked())
+                {
                     _rxchk1checked = true;
                     //Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getText());
                     Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getTag());
                     enableTakenSkip(v);
-                } else {
+                } else
+                {
                     _rxchk1checked = false;
                     enableTakenSkip(v);
                 }
@@ -199,15 +221,19 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
 
         CheckBox _rxCheckBox2 = (CheckBox) findViewById(R.id.rxcheck2);
-        _rxCheckBox2.setOnClickListener(new View.OnClickListener() {
+        _rxCheckBox2.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                if (((CheckBox) v).isChecked()) {
+            public void onClick(View v)
+            {
+                if (((CheckBox) v).isChecked())
+                {
                     _rxchk2checked = true;
                     //Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getText());
                     Log.d("CareClientActivity1", "-- checkBoxChecked --" + ((CheckBox) v).getTag());
                     enableTakenSkip(v);
-                } else {
+                } else
+                {
                     _rxchk2checked = false;
                     enableTakenSkip(v);
                 }
@@ -216,7 +242,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     }
 
 
-    private void enableTakenSkip(View view) {
+    private void enableTakenSkip(View view)
+    {
 
         int _takenColor = 0xffbbbbbb;
         int _skipColor = 0xffbbbbbb;
@@ -229,7 +256,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
         Button _symptom7 = (Button) findViewById(R.id.btsymp7);
         Button _symptom8 = (Button) findViewById(R.id.btsymp8);
 
-        if (_rxchk0checked | _rxchk1checked | _rxchk2checked) {
+        if (_rxchk0checked | _rxchk1checked | _rxchk2checked)
+        {
             _takenColor = 0xffacc875;
             _skipColor = 0xfffff3a4;
 
@@ -241,7 +269,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
             _symptom6.setVisibility(View.VISIBLE);
             _symptom7.setVisibility(View.VISIBLE);
             _symptom8.setVisibility(View.VISIBLE);
-        } else {
+        } else
+        {
             _symptom1.setVisibility(View.INVISIBLE);
             _symptom2.setVisibility(View.INVISIBLE);
             _symptom3.setVisibility(View.INVISIBLE);
@@ -263,13 +292,16 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     }
 
 
-    private void onSkipClick() {
+    private void onSkipClick()
+    {
         Log.d("CareClient", "-- onSkipClick --");
 
         Button _rxskip = (Button) findViewById(R.id.rxskip);
-        _rxskip.setOnClickListener(new View.OnClickListener() {
+        _rxskip.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 submitCaredPersonData("SKIP");
                 moveTaskToBack(true);
             }
@@ -277,13 +309,16 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     }
 
 
-    private void onTakenClick() {
+    private void onTakenClick()
+    {
         Log.d("CareClient", "-- onTakenClick --");
 
         Button _rxtaken = (Button) findViewById(R.id.rxtaken);
-        _rxtaken.setOnClickListener(new View.OnClickListener() {
+        _rxtaken.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 submitCaredPersonData("TAKEN");
                 moveTaskToBack(true);
             }
@@ -294,61 +329,74 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     /**
      * Capture user data and submit to server
      */
-    private void submitCaredPersonData(String action) {
+    private void submitCaredPersonData(String action)
+    {
         String _action = "(ACTION=" + action + ")";
         String _rxTaken = "";
         String _symptom = "";
         String _dataSubmitString = "";
 
-        if (_rxchk0checked) {
+        if (_rxchk0checked)
+        {
             CheckBox _rxCheckBox0 = (CheckBox) findViewById(R.id.rxcheck0);
-            _rxTaken += ((Long)_rxCheckBox0.getTag()).toString() + ",";
+            _rxTaken += ((Long) _rxCheckBox0.getTag()).toString() + ",";
         }
-        if (_rxchk1checked) {
+        if (_rxchk1checked)
+        {
             CheckBox _rxCheckBox1 = (CheckBox) findViewById(R.id.rxcheck1);
-            _rxTaken += ((Long)_rxCheckBox1.getTag()).toString() + ",";
+            _rxTaken += ((Long) _rxCheckBox1.getTag()).toString() + ",";
         }
 
-        if (_rxchk2checked) {
+        if (_rxchk2checked)
+        {
             CheckBox _rxCheckBox2 = (CheckBox) findViewById(R.id.rxcheck2);
-            _rxTaken += ((Long)_rxCheckBox2.getTag()).toString() + ",";
+            _rxTaken += ((Long) _rxCheckBox2.getTag()).toString() + ",";
         }
 
-        if (_sb1Pressed) {
+        if (_sb1Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp1);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
 
-        if (_sb2Pressed) {
+        if (_sb2Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp2);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb3Pressed) {
+        if (_sb3Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp3);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb4Pressed) {
+        if (_sb4Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp4);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb5Pressed) {
+        if (_sb5Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp5);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + "," ;
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb6Pressed) {
+        if (_sb6Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp6);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb7Pressed) {
+        if (_sb7Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp7);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
-        if (_sb8Pressed) {
+        if (_sb8Pressed)
+        {
             Button _symptomButton = (Button) findViewById(R.id.btsymp8);
-            _symptom += ((Long)_symptomButton.getTag()).toString() + ",";
+            _symptom += ((Long) _symptomButton.getTag()).toString() + ",";
         }
 
-        if (_symptom.equals("")) {
+        if (_symptom.equals(""))
+        {
             _symptom = "-";
         }
 
@@ -360,13 +408,16 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
         String _responseData = null;
 
-        try {
+        try
+        {
 
             String imeiCode = readIMEICode();
             //_responseData = MCareBridgeConnector.sendCaredPersonRxData("353197050130472",_dataSubmitString );
             _responseData = MCareBridgeConnector.sendCaredPersonRxData(imeiCode, _dataSubmitString);
             Log.d("CareClientActivity XML -- ", _responseData);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             Log.e("CareClientActivity1", e.getMessage(), e);
         }
@@ -374,21 +425,24 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
 
     }
 
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
 
         super.onDestroy();
 
     }
 
 
-    private void paintScreen(Context context, CaredPerson caredPerson, ArrayList<RxLineDTO> rxLineDTOs) {
+    private void paintScreen(Context context, CaredPerson caredPerson, ArrayList<RxLineDTO> rxLineDTOs)
+    {
         Log.d("CareClientActivity1", "--calling paintScreen --");
         //Set the RxFor
         TextView _rxFor = (TextView) findViewById(R.id.rxfor);
@@ -406,20 +460,24 @@ public class CareClientActivity extends Activity implements View.OnClickListener
      * @param context
      * @param rxLineDTOs
      */
-    private void paintRxLines(Context context, ArrayList<RxLineDTO> rxLineDTOs) {
+    private void paintRxLines(Context context, ArrayList<RxLineDTO> rxLineDTOs)
+    {
         Calendar _c = Calendar.getInstance();
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
         Log.d("CareClientActivity1", "Current Hours --" + _hour);
         int _i = 0;
 
-        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
             RxLines _rxLines = _rxLineDTO.getRxLine();
             Log.d("CareClientActivity1", "--Counter--" + _i);
             Log.d("CareClientActivity-->paintRxLines->", _rxLines.getRx() + "----" + _rxLineDTO.getRxTime());
 
-            if (_rxLineDTO.getRxTime() == _hour) {
-                if (_i == 0) {
+            if (_rxLineDTO.getRxTime() == _hour)
+            {
+                if (_i == 0)
+                {
                     TextView _rxDetails_0 = (TextView) findViewById(R.id.rx1);
                     TextView _rxDosage_0 = (TextView) findViewById(R.id.dose1);
                     TextView _rxDosageTime_0 = (TextView) findViewById(R.id.time1);
@@ -436,7 +494,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
                 }
 
-                if (_i == 1) {
+                if (_i == 1)
+                {
                     TextView _rxDetails_1 = (TextView) findViewById(R.id.rx2);
                     TextView _rxDosage_1 = (TextView) findViewById(R.id.dose2);
                     TextView _rxDosageTime_1 = (TextView) findViewById(R.id.time2);
@@ -452,7 +511,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
                     _rxCheckBox1.setVisibility(View.VISIBLE);
                 }
 
-                if (_i == 2) {
+                if (_i == 2)
+                {
                     TextView _rxDetails_2 = (TextView) findViewById(R.id.rx3);
                     TextView _rxDosage_2 = (TextView) findViewById(R.id.dose3);
                     TextView _rxDosageTime_2 = (TextView) findViewById(R.id.time3);
@@ -474,19 +534,23 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     }
 
 
-    public void onClickSymptoms(View view) {
+    public void onClickSymptoms(View view)
+    {
         //Button _symptom = (Button) findViewById(view.getId());
         //_symptom.setBackgroundColor(0xFF84BB6C);
         Button _symptom = null;
 
-        switch (view.getId()) {
+        switch (view.getId())
+        {
 
             case R.id.btsymp1:
                 _symptom = (Button) findViewById(R.id.btsymp1);
-                if (_sb1Pressed) {
+                if (_sb1Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb1Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb1Pressed = true;
                 }
@@ -494,10 +558,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp2:
                 _symptom = (Button) findViewById(R.id.btsymp2);
-                if (_sb2Pressed) {
+                if (_sb2Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb2Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb2Pressed = true;
                 }
@@ -505,10 +571,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp3:
                 _symptom = (Button) findViewById(R.id.btsymp3);
-                if (_sb3Pressed) {
+                if (_sb3Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb3Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb3Pressed = true;
                 }
@@ -516,10 +584,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp4:
                 _symptom = (Button) findViewById(R.id.btsymp4);
-                if (_sb4Pressed) {
+                if (_sb4Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb4Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb4Pressed = true;
                 }
@@ -527,10 +597,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp5:
                 _symptom = (Button) findViewById(R.id.btsymp5);
-                if (_sb5Pressed) {
+                if (_sb5Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb5Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb5Pressed = true;
                 }
@@ -538,10 +610,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp6:
                 _symptom = (Button) findViewById(R.id.btsymp6);
-                if (_sb6Pressed) {
+                if (_sb6Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb6Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb6Pressed = true;
                 }
@@ -549,10 +623,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp7:
                 _symptom = (Button) findViewById(R.id.btsymp7);
-                if (_sb7Pressed) {
+                if (_sb7Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb7Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb7Pressed = true;
                 }
@@ -560,10 +636,12 @@ public class CareClientActivity extends Activity implements View.OnClickListener
 
             case R.id.btsymp8:
                 _symptom = (Button) findViewById(R.id.btsymp8);
-                if (_sb8Pressed) {
+                if (_sb8Pressed)
+                {
                     _symptom.setBackgroundColor(0xffbbbbbb);
                     _sb8Pressed = false;
-                } else {
+                } else
+                {
                     _symptom.setBackgroundColor(0xFFFFB55D);
                     _sb8Pressed = true;
                 }
@@ -573,7 +651,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     }
 
 
-    private void paintCurrentHealthConditions(Context context, PreExistingCondition preExistingCondition) {
+    private void paintCurrentHealthConditions(Context context, PreExistingCondition preExistingCondition)
+    {
         Condition _condition = preExistingCondition.getConditionList().get(0);
         List<Symptoms> _sympList = _condition.getSymptoms();
 
@@ -623,7 +702,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     /**
      *
      */
-    private void setUpAlarm(ArrayList<RxLineDTO> rxLineDTOs) {
+    private void setUpAlarm(ArrayList<RxLineDTO> rxLineDTOs)
+    {
 
         Log.d("CareClientActivity1", "--calling setUpAlarm --");
 
@@ -631,9 +711,11 @@ public class CareClientActivity extends Activity implements View.OnClickListener
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
         Log.d("CareClientActivity1", "Current Hours --" + _hour);
 
-        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
-            if (_rxLineDTO.getRxTime() >= _hour) {
+            if (_rxLineDTO.getRxTime() >= _hour)
+            {
                 Log.d("CareClientActivity1", "Setting up Alarm" + _rxLineDTO.getRxTime() + " -- "
                         + _rxLineDTO.getRxLineId()
                         + " -- "
@@ -658,7 +740,8 @@ public class CareClientActivity extends Activity implements View.OnClickListener
     /**
      * Read IMEI code
      */
-    private String readIMEICode() {
+    private String readIMEICode()
+    {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String _deviceId = telephonyManager.getDeviceId();
         Log.i("CareClientActivity1", _deviceId);

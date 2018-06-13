@@ -23,26 +23,31 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 
-public class ClientService extends IntentService {
+public class ClientService extends IntentService
+{
 
-    public ClientService() {
+    public ClientService()
+    {
         super("ClientService");
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(Intent intent)
+    {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(Intent intent)
+    {
         Log.d("ClientService", "--calling onHandleIntent --");
         //Uri _uri = intent.getData();
         //Log.d("ClientService", "uri path -- " + _uri.getPath());
     }
 
     @Override
-    public void onCreate() {
+    public void onCreate()
+    {
 
         // TODO Auto-generated method stub
         super.onCreate();
@@ -56,7 +61,8 @@ public class ClientService extends IntentService {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public void onStart(Intent intent, int startId)
+    {
         super.onStart(intent, startId);
         Log.d("ClientService", "--calling onStart -- " + startId);
         String _responseData = null;
@@ -72,7 +78,8 @@ public class ClientService extends IntentService {
          setUpAlarm(_rxLineDTOList);
          **/
 
-        try {
+        try
+        {
 
             String imeiCode = readIMEICode();
             //_responseData = MCareBridgeConnector.synchMobileUsingIMEI("353197050130472");
@@ -84,26 +91,35 @@ public class ClientService extends IntentService {
             _serviceCall = true;
             _rxSynchStatus = "SUCCESS";
 
-        } catch (SocketTimeoutException s) {
+        }
+        catch (SocketTimeoutException s)
+        {
             Log.e("ClientService", s.getMessage(), s);
             s.printStackTrace();
             _rxSynchStatus = "TIMEOUT";
-        } catch (UnknownHostException u) {
+        }
+        catch (UnknownHostException u)
+        {
             Log.e("ClientService", u.getMessage(), u);
             u.printStackTrace();
             _rxSynchStatus = "TIMEOUT";
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Log.e("ClientService", e.getMessage(), e);
             e.printStackTrace();
             _rxSynchStatus = "ERROR";
 
-        } finally {
+        }
+        finally
+        {
 
             boolean _isRxReady = false;
             intent.setAction(Intent.ACTION_MAIN);
             //intent.addCategory(Intent.CATEGORY_LAUNCHER);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (_rxSynchStatus.equals("SUCCESS")) {
+            if (_rxSynchStatus.equals("SUCCESS"))
+            {
                 intent.putExtra("XML_DATA", _responseData.toCharArray());
                 intent.putExtra("RX_CONSUMED", _rxConsumed.toCharArray());
                 intent.putExtra("RX_ASYNC", _rxSynch.toCharArray());
@@ -120,19 +136,23 @@ public class ClientService extends IntentService {
 
             Log.d("ClientService", "_rxSynchStatus = " + _rxSynchStatus + "_isRxReady = " + _isRxReady);
 
-            if (_rxSynchStatus.equals("SUCCESS")) {
-                if (_isRxReady) {
+            if (_rxSynchStatus.equals("SUCCESS"))
+            {
+                if (_isRxReady)
+                {
                     Log.d("ClientService", "-- start Activity Triggered Point 1--");
                     startActivity(intent);
                 }
-            } else {
+            } else
+            {
                 Toast.makeText(this, "No Rx scheduled", Toast.LENGTH_LONG)
                         .show();
             }
 
 
             //For error scenario
-            if (!_rxSynchStatus.equals("SUCCESS")) {
+            if (!_rxSynchStatus.equals("SUCCESS"))
+            {
                 Log.d("ClientService", "-- start Activity triggered Point 2--");
                 startActivity(intent);
             }
@@ -141,7 +161,8 @@ public class ClientService extends IntentService {
 
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
     }
 
@@ -149,16 +170,19 @@ public class ClientService extends IntentService {
     /**
      *
      */
-    private void setUpAlarm(ArrayList<RxLineDTO> rxLineDTOs) {
+    private void setUpAlarm(ArrayList<RxLineDTO> rxLineDTOs)
+    {
 
 
         Calendar _c = Calendar.getInstance();
         int _hour = _c.get(Calendar.HOUR_OF_DAY);
         Log.d("CareClientActivity", "Current Hours --" + _hour);
 
-        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = rxLineDTOs.iterator(); iterator.hasNext(); )
+        {
             RxLineDTO _rxLineDTO = (RxLineDTO) iterator.next();
-            if (_rxLineDTO.getRxTime() >= _hour) {
+            if (_rxLineDTO.getRxTime() >= _hour)
+            {
                 Log.d("CareClientActivity", _rxLineDTO.getRxTime() + " -- "
                         + _rxLineDTO.getRxLineId()
                         + " -- "
@@ -176,7 +200,8 @@ public class ClientService extends IntentService {
     /**
      * Read IMEI code
      */
-    private String readIMEICode() {
+    private String readIMEICode()
+    {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String _deviceId = telephonyManager.getDeviceId();
         Log.i("CareClientActivity1", _deviceId);

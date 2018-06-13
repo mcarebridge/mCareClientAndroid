@@ -3,7 +3,8 @@ package com.phr.ade.connector;
 /**
  * Createdbydeejayon9/24/2114.
  */
-public interface XMLData {
+public interface XMLData
+{
 
     static String xmlString = "<?xml version='1.0' encoding='UTF-8'?>" +
             "<CaredPerson>" +

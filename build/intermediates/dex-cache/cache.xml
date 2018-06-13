@@ -3,21 +3,21 @@
 
     <item
         is-multidex="true"
-        jar="C:\devarea\mCareClientAndroid\app\build\intermediates\incremental-classes\release\instant-run-bootstrap.jar"
+        jar="C:\devarea\mCareClientAndroid_v2\app\build\intermediates\incremental-classes\release\instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="2055957da4ef301d316566c49498c74db89c549f">
-        <dex dex="C:\devarea\mCareClientAndroid\app\build\intermediates\transforms\dex\release\folders\1000\10000\instant-run-bootstrap_f775a496b6ca5b63d0a3b9b08ff26f82e111c094\classes.dex" />
+        sha1="58cc608546e8c1ce50122e308417fb0fab5b9bbf">
+        <dex dex="C:\devarea\mCareClientAndroid_v2\app\build\intermediates\transforms\dex\release\folders\1000\10000\instant-run-bootstrap_98a9625ce1d2d4a73bdde0a16133430e72005cb8\classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="C:\devarea\mCareClientAndroid\app\build\intermediates\incremental-runtime-classes\release\instant-run.jar"
+        jar="C:\devarea\mCareClientAndroid_v2\app\build\intermediates\incremental-runtime-classes\release\instant-run.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
-        <dex dex="C:\devarea\mCareClientAndroid\app\build\intermediates\transforms\dex\release\folders\1000\10000\instant-run_6fe7ca695dd5f296fbddbde8608bfe2fa98e0854\classes.dex" />
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="C:\devarea\mCareClientAndroid_v2\app\build\intermediates\transforms\dex\release\folders\1000\10000\instant-run_db10ee5a641dd64d98253562224f984d2279c5d2\classes.dex" />
     </item>
 
 </items>

@@ -11,7 +11,8 @@ import java.util.HashMap;
  * This call connects with mCare server Async gets the data
  */
 
-public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap> {
+public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap>
+{
 
     private Context mContext;
     private OnTaskDoneListener onTaskDoneListener;
@@ -20,7 +21,8 @@ public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap> {
     private boolean invokedinBackground;
 
 
-    public MCareHttpClientAsyncTask(Context context, OnTaskDoneListener onTaskDoneListener, boolean invokedinBackground) {
+    public MCareHttpClientAsyncTask(Context context, OnTaskDoneListener onTaskDoneListener, boolean invokedinBackground)
+    {
         Log.d("MCareHttpClientAsyncTask", "-- Constructor --");
 
         this.mContext = context;
@@ -30,10 +32,12 @@ public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap> {
     }
 
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
 
         Log.d("MCareHttpClientAsyncTask.onPreExecute", "----");
-        if (!invokedinBackground) {
+        if (!invokedinBackground)
+        {
             progressDialog.setMessage("Please wait for Rx Synch Up.");
             progressDialog.show();
             super.onPreExecute();
@@ -48,7 +52,8 @@ public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap> {
      * @return
      */
     @Override
-    protected HashMap doInBackground(String... params) {
+    protected HashMap doInBackground(String... params)
+    {
 
         Log.d("MCareHttpClientAsyncTask", "-- doInBackground --");
 
@@ -68,14 +73,20 @@ public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap> {
      * @param s
      */
     @Override
-    protected void onPostExecute(HashMap s) {
+    protected void onPostExecute(HashMap s)
+    {
         Log.d("CareClientActivity2A", "-- onPostExecute --");
         super.onPostExecute(s);
 
-        if (onTaskDoneListener != null && s != null) {
+        if (onTaskDoneListener != null && s != null)
+        {
             onTaskDoneListener.onTaskDone(s);
         } else
+        {
             onTaskDoneListener.onError();
+        }
+
+        this.progressDialog.dismiss();
     }
 
 }
