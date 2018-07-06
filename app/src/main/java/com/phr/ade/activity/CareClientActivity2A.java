@@ -115,6 +115,8 @@ public class CareClientActivity2A extends Activity implements View.OnClickListen
         if (!isActiveInBkgrnd)
         {
             Log.d("CareClientActivity2A", "--calling onStart --");
+            String iso3Language = getApplicationContext().getResources().getConfiguration().locale.getISO3Language();
+            Log.d("Application Locale ", iso3Language);
             Intent _intent = getIntent();
             char[] _rxSynchStatus = _intent.getCharArrayExtra("RX_SYNCH_STATUS");
             char[] _caredPersonName = _intent.getCharArrayExtra("CARED_PERSON");
@@ -269,15 +271,18 @@ public class CareClientActivity2A extends Activity implements View.OnClickListen
 
                 if (rxSchdl)
                 {
-                    _messageToDisplay = "You have scheduled medication. Click on 'Load Rx' to Proceed ";
+                    //_messageToDisplay = "You have scheduled medication. Click on 'Load Rx' to Proceed ";
+                    _messageToDisplay = _context.getResources().getString(R.string.rxscdledMsg);
                     CareClientUtil.triggerRxAlert(_context);
                     Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
-                    _synchButton.setText("Load Rx");
+                    String _loadRx = _context.getResources().getString(R.string.btnLoadRx);
+                    _synchButton.setText(_loadRx);
                     _synchButton.setBackground(_d);
                 } else
                 {
-                    _messageToDisplay = "Relax. No scheduled medication.";
-                    _synchButton.setText("No Rx");
+                    _messageToDisplay = _context.getResources().getString(R.string.norxscdledMsg);
+                    String _noRx = _context.getResources().getString(R.string.btnNoRx);
+                    _synchButton.setText(_noRx);
                     Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtndisabled);
                     _synchButton.setBackground(_d);
                     _synchButton.setClickable(false);
@@ -287,58 +292,64 @@ public class CareClientActivity2A extends Activity implements View.OnClickListen
             // auth.equals("AUTH-FAILED")
             else
             {
-                Log.d("selectDisplayMessage : AuthStatus - ", auth + "-");
-                _messageToDisplay = "Welcome to mCareBridge.";
+                Log.d("selDisplayMsg:authStatus:", auth + "-");
+                _messageToDisplay = _context.getResources().getString(R.string.msgMainWelcome);
                 _synchButton.setClickable(true);
                 _closeButton.setClickable(true);
                 _caredPersonText.setText("New User");
                 //Context _context = getApplicationContext();
                 Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
                 _synchButton.setBackground(_d);
-                _synchButton.setText("Retry");
-                _messageToDisplay += '\t' + "You are not registered with mCareBridge. Please contact your Care Provider.";
+                String _retry = _context.getResources().getString(R.string.btnRetry);
+                _synchButton.setText(_retry);
+                _messageToDisplay += '\t' + _context.getResources().getString(R.string.msgNotReg);
             }
         } else if (rxSynchStatus.equals("WELCOME"))
         {
-            _messageToDisplay = "Welcome to mCareBridge. Please proceed Synch to Proceed.";
+            _messageToDisplay = _context.getResources().getString(R.string.msgWelcome);
             setWifiIcon(SYNC_SUCCESSFUL);
             Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
             _synchButton.setBackground(_d);
-            _synchButton.setText("Synch");
+            String _synch = _context.getResources().getString(R.string.btnSynch);
+            _synchButton.setText(_synch);
             _synchButton.setClickable(true);
             _closeButton.setClickable(true);
         } else if (rxSynchStatus.equals("TIMEOUT"))
         {
-            _messageToDisplay = "Connection Timeout. Please check internet connection.";
+            _messageToDisplay = _context.getResources().getString(R.string.msgTimeOutNoInternet);
             setWifiIcon(CONNECTION_ERR);
-            _synchButton.setText("Retry");
+            String _retry = _context.getResources().getString(R.string.btnRetry);
+            _synchButton.setText(_retry);
             _synchButton.setClickable(true);
             _closeButton.setClickable(true);
         } else if (rxSynchStatus.equals("HOST_NOT_FOUND"))
         {
-            _messageToDisplay = "Unable to resolve server name. Please check internet connection.";
+            _messageToDisplay = _context.getResources().getString(R.string.msgSrvNotFndNoInternet);
             setWifiIcon(CONNECTION_ERR);
             Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
             _synchButton.setBackground(_d);
-            _synchButton.setText("Retry");
+            String _retry = _context.getResources().getString(R.string.btnRetry);
+            _synchButton.setText(_retry);
             _synchButton.setClickable(true);
             _closeButton.setClickable(true);
         } else if (rxSynchStatus.equals("ERROR"))
         {
-            _messageToDisplay = "Error in Data Synch. Please report to admin@mcarebridge.com.";
+            _messageToDisplay = _context.getResources().getString(R.string.msgDataSynchErr);
             setWifiIcon(TIMEOUT_ERR);
             _synchButton.setClickable(false);
-            _synchButton.setText("Synch Err");
+            String _synchErr = _context.getResources().getString(R.string.btnSynchErr);
+            _synchButton.setText(_synchErr);
             _closeButton.setClickable(true);
         } else
         {
             Log.d("Displaying rxSynchStatus values for last condition :  ----> ", rxSynchStatus);
-            _messageToDisplay = "Unexpected err: " + rxSynchStatus + " Please report to admin@mcarebridge.com.";
+            _messageToDisplay = "Unexpected err: " + rxSynchStatus + " Please report to care@sevha.com.";
             setWifiIcon(CONNECTION_ERR);
             Drawable _d = _context.getResources().getDrawable(R.drawable.synchbtn);
             _synchButton.setBackground(_d);
             _synchButton.setClickable(true);
-            _synchButton.setText("Retry");
+            String _retry = _context.getResources().getString(R.string.btnRetry);
+            _synchButton.setText(_retry);
             _closeButton.setClickable(true);
         }
 
@@ -388,28 +399,38 @@ public class CareClientActivity2A extends Activity implements View.OnClickListen
     {
         long emergencyContactNumber = -1;
         String emergencyContactProvider = "None";
+        Context _context = getApplicationContext();
+        String _emergencyNumber = null;
 
-        String _emergencyNumber = getCaredPerson().getEmergencyResponse().getProvider().getCell();
-
-        if (!_emergencyNumber.equalsIgnoreCase("-"))
+        try
         {
-            emergencyContactNumber = new Long(_emergencyNumber).longValue();
+            _emergencyNumber = getCaredPerson().getEmergencyResponse().getProvider().getCell();
+
+            if (!_emergencyNumber.equalsIgnoreCase("-"))
+            {
+                emergencyContactNumber = new Long(_emergencyNumber).longValue();
+            }
+
+            emergencyContactProvider = getCaredPerson().getEmergencyResponse().getProvider().getContact();
+
+            if (emergencyContactNumber != -1)
+            {
+
+                _emergencyNumber = "tel:" + emergencyContactNumber;
+                Uri number = Uri.parse(_emergencyNumber);
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                Toast.makeText(this, "Calling Emergency Contact :" + emergencyContactProvider, Toast.LENGTH_LONG)
+                        .show();
+                startActivity(callIntent);
+            } else
+            {
+                Toast.makeText(this, _context.getResources().getString(R.string.msgNoEmgContact), Toast.LENGTH_LONG)
+                        .show();
+            }
         }
-
-        emergencyContactProvider = getCaredPerson().getEmergencyResponse().getProvider().getContact();
-
-        if (emergencyContactNumber != -1)
+        catch(NullPointerException npe)
         {
-
-            _emergencyNumber = "tel:" + emergencyContactNumber;
-            Uri number = Uri.parse(_emergencyNumber);
-            Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
-            Toast.makeText(this, "Calling Emergency Contact :" + emergencyContactProvider, Toast.LENGTH_LONG)
-                    .show();
-            startActivity(callIntent);
-        } else
-        {
-            Toast.makeText(this, "No Emergency Contact Found", Toast.LENGTH_LONG)
+            Toast.makeText(this, _context.getResources().getString(R.string.msgNoEmgContact), Toast.LENGTH_LONG)
                     .show();
         }
 

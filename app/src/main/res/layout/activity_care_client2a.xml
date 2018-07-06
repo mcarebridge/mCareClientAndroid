@@ -32,7 +32,7 @@
         android:drawableTop="@drawable/ic_highlight_off_white_24dp"
         android:onClick="onQuit"
         android:paddingTop="5dp"
-        android:text="  Close  "
+        android:text="@string/btnClose"
         android:textColor="#ffffffff" />
 
     <Button
@@ -167,7 +167,7 @@
         android:editable="false"
         android:enabled="false"
         android:layerType="software"
-        android:text="Dial Emergency"
+        android:text="@string/labelEmergency"
         android:textColor="@color/brick_red"
         android:layout_alignLeft="@+id/synchbtn"
         android:layout_alignStart="@+id/synchbtn" />

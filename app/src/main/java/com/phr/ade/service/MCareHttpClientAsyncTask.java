@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.phr.ade.activity.R;
+
 import java.util.HashMap;
 
 /**
@@ -38,7 +40,8 @@ public class MCareHttpClientAsyncTask extends AsyncTask<String, Void, HashMap>
         Log.d("MCareHttpClientAsyncTask.onPreExecute", "----");
         if (!invokedinBackground)
         {
-            progressDialog.setMessage("Please wait for Rx Synch Up.");
+            String _msg = mContext.getResources().getString(R.string.msgRxSynchUp);
+            progressDialog.setMessage(_msg);
             progressDialog.show();
             super.onPreExecute();
         }

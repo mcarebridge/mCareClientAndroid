@@ -349,7 +349,7 @@
         android:clickable="false"
         android:drawableTop="@drawable/ic_check_black_24dp"
         android:paddingTop="5dp"
-        android:text="Taken"
+        android:text="@string/btnTaken"
         android:typeface="sans"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/rxskip"
@@ -366,7 +366,7 @@
         android:clickable="true"
         android:drawableTop="@drawable/ic_highlight_off_white_24dp"
         android:paddingTop="5dp"
-        android:text="Close"
+        android:text="@string/btnClose"
         android:typeface="sans"
         android:layout_toLeftOf="@+id/nextRx"
         android:layout_toStartOf="@+id/nextRx" />
@@ -385,7 +385,7 @@
         android:longClickable="false"
         android:onClick="readNext"
         android:paddingTop="5dp"
-        android:text="Next"
+        android:text="@string/btnNext"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
     <Button
@@ -457,7 +457,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="25dp"
-        android:text="Dial EMERGENCY"
+        android:text="@string/labelEmergency"
         android:textAlignment="center"
         android:textColor="@color/brick_red"
         android:textSize="16sp" />

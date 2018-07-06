@@ -3,6 +3,8 @@ package com.phr.ade.connector;
 import android.os.StrictMode;
 import android.util.Log;
 
+import com.phr.ade.util.CareClientUtil;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -330,8 +332,7 @@ public class MCareBridgeConnector
             if (!smsSent)
             {
                 // 04/09 - Stopping SMS module for sometime.
-
-                //CareClientUtil.sendSMS(_cgCell, _message);
+                CareClientUtil.sendSMS(_cgCell, _message);
                 smsSent = true;
             }
         }

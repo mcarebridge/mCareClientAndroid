@@ -9,8 +9,8 @@ android {
             storePassword '1q2w3e4r'
         }
     }
-    compileSdkVersion 21
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 22
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "android.ade.phr.com.careclient"
         minSdkVersion 16
